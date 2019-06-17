@@ -1,0 +1,432 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 50;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		449FDDE3771546EE11F9CBAD /* libPods-FFAudioPlayer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C5E418BE498A63D0F6DA055 /* libPods-FFAudioPlayer.a */; };
+		ED26681822B776AE00243735 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = ED26681722B776AE00243735 /* AppDelegate.m */; };
+		ED26681B22B776AE00243735 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED26681A22B776AE00243735 /* ViewController.m */; };
+		ED26681E22B776AE00243735 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ED26681C22B776AE00243735 /* Main.storyboard */; };
+		ED26682022B776B000243735 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = ED26681F22B776B000243735 /* Assets.xcassets */; };
+		ED26682322B776B000243735 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ED26682122B776B000243735 /* LaunchScreen.storyboard */; };
+		ED26682622B776B000243735 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ED26682522B776B000243735 /* main.m */; };
+		ED26683322B7868F00243735 /* FFNetWorkTool.m in Sources */ = {isa = PBXBuildFile; fileRef = ED26683222B7868F00243735 /* FFNetWorkTool.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		1064703CCD95090B462102DA /* Pods-FFAudioPlayer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FFAudioPlayer.debug.xcconfig"; path = "Pods/Target Support Files/Pods-FFAudioPlayer/Pods-FFAudioPlayer.debug.xcconfig"; sourceTree = "<group>"; };
+		3C5E418BE498A63D0F6DA055 /* libPods-FFAudioPlayer.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-FFAudioPlayer.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		60794A0FAAB8BE2717F2B1E0 /* Pods-FFAudioPlayer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-FFAudioPlayer.release.xcconfig"; path = "Pods/Target Support Files/Pods-FFAudioPlayer/Pods-FFAudioPlayer.release.xcconfig"; sourceTree = "<group>"; };
+		ED26681322B776AE00243735 /* FFAudioPlayer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FFAudioPlayer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		ED26681622B776AE00243735 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		ED26681722B776AE00243735 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		ED26681922B776AE00243735 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		ED26681A22B776AE00243735 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		ED26681D22B776AE00243735 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		ED26681F22B776B000243735 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		ED26682222B776B000243735 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		ED26682422B776B000243735 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		ED26682522B776B000243735 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		ED26682C22B77CB200243735 /* PrefixHeader.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = "<group>"; };
+		ED26682D22B77CFD00243735 /* Const.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Const.h; sourceTree = "<group>"; };
+		ED26683122B7868F00243735 /* FFNetWorkTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFNetWorkTool.h; sourceTree = "<group>"; };
+		ED26683222B7868F00243735 /* FFNetWorkTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFNetWorkTool.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		ED26681022B776AE00243735 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				449FDDE3771546EE11F9CBAD /* libPods-FFAudioPlayer.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2E1DF133987A6604A12FC2B7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				3C5E418BE498A63D0F6DA055 /* libPods-FFAudioPlayer.a */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		4686A56E98EF671178D0737E /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				1064703CCD95090B462102DA /* Pods-FFAudioPlayer.debug.xcconfig */,
+				60794A0FAAB8BE2717F2B1E0 /* Pods-FFAudioPlayer.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		ED26680A22B776AE00243735 = {
+			isa = PBXGroup;
+			children = (
+				ED26681522B776AE00243735 /* FFAudioPlayer */,
+				ED26681422B776AE00243735 /* Products */,
+				4686A56E98EF671178D0737E /* Pods */,
+				2E1DF133987A6604A12FC2B7 /* Frameworks */,
+			);
+			sourceTree = "<group>";
+		};
+		ED26681422B776AE00243735 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				ED26681322B776AE00243735 /* FFAudioPlayer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		ED26681522B776AE00243735 /* FFAudioPlayer */ = {
+			isa = PBXGroup;
+			children = (
+				ED26681622B776AE00243735 /* AppDelegate.h */,
+				ED26681722B776AE00243735 /* AppDelegate.m */,
+				ED26681922B776AE00243735 /* ViewController.h */,
+				ED26681A22B776AE00243735 /* ViewController.m */,
+				ED26683122B7868F00243735 /* FFNetWorkTool.h */,
+				ED26683222B7868F00243735 /* FFNetWorkTool.m */,
+				ED26681C22B776AE00243735 /* Main.storyboard */,
+				ED26681F22B776B000243735 /* Assets.xcassets */,
+				ED26682122B776B000243735 /* LaunchScreen.storyboard */,
+				ED26682422B776B000243735 /* Info.plist */,
+				ED26682C22B77CB200243735 /* PrefixHeader.pch */,
+				ED26682D22B77CFD00243735 /* Const.h */,
+				ED26682522B776B000243735 /* main.m */,
+			);
+			path = FFAudioPlayer;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		ED26681222B776AE00243735 /* FFAudioPlayer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ED26682922B776B000243735 /* Build configuration list for PBXNativeTarget "FFAudioPlayer" */;
+			buildPhases = (
+				8DAF2FDA5A9BE6E52C437AF7 /* [CP] Check Pods Manifest.lock */,
+				ED26680F22B776AE00243735 /* Sources */,
+				ED26681022B776AE00243735 /* Frameworks */,
+				ED26681122B776AE00243735 /* Resources */,
+				6265F6BFC23D0268EE0269AD /* [CP] Embed Pods Frameworks */,
+				1A40CC833ACCF93A2C0186AA /* [CP] Copy Pods Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = FFAudioPlayer;
+			productName = FFAudioPlayer;
+			productReference = ED26681322B776AE00243735 /* FFAudioPlayer.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		ED26680B22B776AE00243735 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 1020;
+				ORGANIZATIONNAME = "柏富茯";
+				TargetAttributes = {
+					ED26681222B776AE00243735 = {
+						CreatedOnToolsVersion = 10.2;
+					};
+				};
+			};
+			buildConfigurationList = ED26680E22B776AE00243735 /* Build configuration list for PBXProject "FFAudioPlayer" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = ED26680A22B776AE00243735;
+			productRefGroup = ED26681422B776AE00243735 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				ED26681222B776AE00243735 /* FFAudioPlayer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		ED26681122B776AE00243735 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ED26682322B776B000243735 /* LaunchScreen.storyboard in Resources */,
+				ED26682022B776B000243735 /* Assets.xcassets in Resources */,
+				ED26681E22B776AE00243735 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		1A40CC833ACCF93A2C0186AA /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FFAudioPlayer/Pods-FFAudioPlayer-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6265F6BFC23D0268EE0269AD /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-FFAudioPlayer/Pods-FFAudioPlayer-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		8DAF2FDA5A9BE6E52C437AF7 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-FFAudioPlayer-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		ED26680F22B776AE00243735 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				ED26681B22B776AE00243735 /* ViewController.m in Sources */,
+				ED26682622B776B000243735 /* main.m in Sources */,
+				ED26683322B7868F00243735 /* FFNetWorkTool.m in Sources */,
+				ED26681822B776AE00243735 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		ED26681C22B776AE00243735 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				ED26681D22B776AE00243735 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		ED26682122B776B000243735 /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				ED26682222B776B000243735 /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		ED26682722B776B000243735 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		ED26682822B776B000243735 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.2;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		ED26682A22B776B000243735 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1064703CCD95090B462102DA /* Pods-FFAudioPlayer.debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RW77ZWB5F9;
+				INFOPLIST_FILE = FFAudioPlayer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = BFF.FFAudioPlayer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		ED26682B22B776B000243735 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 60794A0FAAB8BE2717F2B1E0 /* Pods-FFAudioPlayer.release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = RW77ZWB5F9;
+				INFOPLIST_FILE = FFAudioPlayer/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = BFF.FFAudioPlayer;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		ED26680E22B776AE00243735 /* Build configuration list for PBXProject "FFAudioPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ED26682722B776B000243735 /* Debug */,
+				ED26682822B776B000243735 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ED26682922B776B000243735 /* Build configuration list for PBXNativeTarget "FFAudioPlayer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				ED26682A22B776B000243735 /* Debug */,
+				ED26682B22B776B000243735 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = ED26680B22B776AE00243735 /* Project object */;
+}
