@@ -9,6 +9,8 @@
 #import "ViewController.h"
 #import "PrefixHeader.pch"
 #import <AFNetworking.h>
+#import "FFNetWorkTool.h"
+#import "FFPlayViewViewController.h"
 
 @interface ViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic,strong)UITableView *tableView;
@@ -20,7 +22,14 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     [self setUpUI];
-    self.dataArray = [NSMutableArray array];
+    [self loadData];
+}
+
+- (NSMutableArray *)dataArray {
+    if (!_dataArray) {
+        _dataArray = [NSMutableArray array];
+    }
+    return _dataArray;
 }
 
 - (void)setUpUI {
@@ -30,19 +39,15 @@
 
 - (void)loadData {
     NSString *url = @"http://mobile.ximalaya.com/mobile/v1/album?albumId=3021864&device=iPhone&pageSize=20&source=5&statEvent=pageview%2Falbum%403021864&statModule=听小说_幻想&statPage=categorytag%40听小说_幻想&statPosition=105";
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
-    AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
-    NSURL *URL = [NSURL URLWithString:url];
-    NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     
-//    [FMAFNetWorkingTool getUrl:[url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]] body:nil result:FMJSON headerFile:nil success:^(id result) {
-//        for (NSDictionary *dic in result[@"data"][@"tracks"][@"list"]) {
-//            [self.dataArray addObject:dic];
-//        }
-//        [self.singTableView reloadData];
-//    } failure:^(NSError *error) {
-//
-//    }];
+    [FFNetWorkTool doGetWithURLString:[url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]] params:nil success:^(id  _Nonnull response) {
+        for (NSDictionary *dic in response[@"data"][@"tracks"][@"list"]) {
+            NSLog(@"%@",dic);
+            [self.dataArray addObject:dic];
+        }
+        [self.tableView reloadData];
+    }];
+    
 }
 
 - (void)prepareTableView {
@@ -57,19 +62,23 @@
     return 1;
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-    return 1;
+    return self.dataArray.count;
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
-    static NSString *cellID = @"cellId";
-    
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+    static NSString *reuse = @"cellReuse";
+    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:reuse];
     if (!cell) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuse];
     }
+    NSDictionary *dic = self.dataArray[indexPath.row];
+    cell.textLabel.text = dic[@"title"];
+    
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    
+    FFPlayViewViewController *playerViewVC = [[FFPlayViewViewController alloc] init];
+    playerViewVC.musicArr = self.dataArray;
+    [self presentViewController:playerViewVC animated:YES completion:nil];
 }
 
 

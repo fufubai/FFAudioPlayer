@@ -10,7 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-typedef void(^successData)(BOOL success,NSString *audioStr);
+typedef void(^successData)(id response);
 
 @interface FFNetWorkTool : NSObject
 /**
@@ -21,7 +21,12 @@ typedef void(^successData)(BOOL success,NSString *audioStr);
 /**
  * 创建请求POST
  */
-- (void)doPostWithURL:(NSString *)urlsString success:(successData)success;
++ (void)doPostWithURLString:(NSString *)urlString params:(id _Nullable)params success:(successData)success;
+
+/**
+ * 创建请求GET
+ */
++ (void)doGetWithURLString:(NSString *)urlString params:(id _Nullable)params success:(successData)success;
 
 @end
 

@@ -15,6 +15,8 @@
 		ED26682322B776B000243735 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ED26682122B776B000243735 /* LaunchScreen.storyboard */; };
 		ED26682622B776B000243735 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ED26682522B776B000243735 /* main.m */; };
 		ED26683322B7868F00243735 /* FFNetWorkTool.m in Sources */ = {isa = PBXBuildFile; fileRef = ED26683222B7868F00243735 /* FFNetWorkTool.m */; };
+		ED8F7CCE22B8CCC100C9544B /* FFPlayViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED8F7CCD22B8CCC100C9544B /* FFPlayViewViewController.m */; };
+		ED8F7CD222B8E53900C9544B /* FFPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ED8F7CD122B8E53900C9544B /* FFPlayer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -35,6 +37,10 @@
 		ED26682D22B77CFD00243735 /* Const.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Const.h; sourceTree = "<group>"; };
 		ED26683122B7868F00243735 /* FFNetWorkTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFNetWorkTool.h; sourceTree = "<group>"; };
 		ED26683222B7868F00243735 /* FFNetWorkTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFNetWorkTool.m; sourceTree = "<group>"; };
+		ED8F7CCC22B8CCC100C9544B /* FFPlayViewViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFPlayViewViewController.h; sourceTree = "<group>"; };
+		ED8F7CCD22B8CCC100C9544B /* FFPlayViewViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFPlayViewViewController.m; sourceTree = "<group>"; };
+		ED8F7CD022B8E53900C9544B /* FFPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFPlayer.h; sourceTree = "<group>"; };
+		ED8F7CD122B8E53900C9544B /* FFPlayer.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFPlayer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +97,10 @@
 				ED26681722B776AE00243735 /* AppDelegate.m */,
 				ED26681922B776AE00243735 /* ViewController.h */,
 				ED26681A22B776AE00243735 /* ViewController.m */,
+				ED8F7CCC22B8CCC100C9544B /* FFPlayViewViewController.h */,
+				ED8F7CCD22B8CCC100C9544B /* FFPlayViewViewController.m */,
+				ED8F7CD022B8E53900C9544B /* FFPlayer.h */,
+				ED8F7CD122B8E53900C9544B /* FFPlayer.m */,
 				ED26683122B7868F00243735 /* FFNetWorkTool.h */,
 				ED26683222B7868F00243735 /* FFNetWorkTool.m */,
 				ED26681C22B776AE00243735 /* Main.storyboard */,
@@ -230,7 +240,9 @@
 			files = (
 				ED26681B22B776AE00243735 /* ViewController.m in Sources */,
 				ED26682622B776B000243735 /* main.m in Sources */,
+				ED8F7CD222B8E53900C9544B /* FFPlayer.m in Sources */,
 				ED26683322B7868F00243735 /* FFNetWorkTool.m in Sources */,
+				ED8F7CCE22B8CCC100C9544B /* FFPlayViewViewController.m in Sources */,
 				ED26681822B776AE00243735 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

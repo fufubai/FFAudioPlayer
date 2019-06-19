@@ -6,6 +6,7 @@ target 'FFAudioPlayer' do
   # use_frameworks!
 
   # Pods for FFAudioPlayer
-pod "AFNetworking"
+pod 'AFNetworking'
 pod "Masonry"
+pod "SDWebImage"
 end
