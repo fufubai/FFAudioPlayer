@@ -51,6 +51,7 @@ static dispatch_once_t _onceToken;
             self.avPlayer = [[AVPlayer alloc]initWithPlayerItem:self.songItem];
             [self.avPlayer play];
         }
+        self.isPlaying = YES;
     });
 }
 
@@ -77,10 +78,12 @@ static dispatch_once_t _onceToken;
 }
 
 - (void)pause; {
+    self.isPlaying = NO;
     [self.avPlayer pause];
 }
 
 - (void)play; {
+    self.isPlaying = YES;
     [self.avPlayer play];
 }
 

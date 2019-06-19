@@ -15,6 +15,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, strong) AVPlayer  *avPlayer;//播放网络音频
 @property (nonatomic,strong)AVPlayerItem * songItem;
+@property (nonatomic,assign)BOOL isPlaying;//播放状态
 
 - (void)playWithMusicName:(NSString *)musicUrl;
 

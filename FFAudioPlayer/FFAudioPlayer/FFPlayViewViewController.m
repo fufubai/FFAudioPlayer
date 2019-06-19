@@ -41,6 +41,7 @@
     self.view.backgroundColor = [UIColor grayColor];
     [self createView];
     self.timer = [self addMusicTimer];
+    
     [self startPlay];
 }
 
@@ -65,6 +66,7 @@
     if (self.sliderProgress.value >= 0.9999) {
         [self nextButtonAction:self.nextButton];
     }
+    
 }
 
 //转换时间的显示格式
@@ -247,9 +249,14 @@
 - (void)startPlay {
     
     NSDictionary *musicDic = self.musicArr[self.currentIndex];
-    [[FFPlayer musicTool] playWithMusicName:musicDic[@"playUrl64"]];
     [_revolveImage sd_setImageWithURL:[NSURL URLWithString:musicDic[@"coverMiddle"]]];
     _musicTitleLabel.text = musicDic[@"title"];
+    
+    if ([FFPlayer musicTool].isPlaying) {
+        [[FFPlayer musicTool] play];
+    }else {
+        [[FFPlayer musicTool] playWithMusicName:musicDic[@"playUrl64"]];
+    }
 }
 
 - (void)durationSliderTouch:(UISlider *)slider {
@@ -270,6 +277,10 @@
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
+- (void)dealloc {
+    [self.timer invalidate];
+    self.timer = nil;
+}
 
 
 
