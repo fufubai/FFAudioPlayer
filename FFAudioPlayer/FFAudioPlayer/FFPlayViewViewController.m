@@ -28,6 +28,7 @@
 @property (nonatomic, assign) CGFloat totalTime;
 @property (nonatomic, strong) UIButton *lastButton;
 @property (nonatomic, strong) UIButton *nextButton;
+@property (nonatomic, strong) UIButton *backButton;
 
 @property (nonatomic,strong)NSTimer *timer;
 @end
@@ -86,6 +87,13 @@
 
 #pragma mark - 创建视图
 - (void)createView{
+    if (!_backButton) {
+        _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [ self.view addSubview:_backButton];
+        [_backButton setImage:[UIImage imageNamed:@"backBtn"] forState:UIControlStateNormal];
+        [_backButton addTarget:self action:@selector(backBtnAction) forControlEvents:UIControlEventTouchUpInside];
+    }
+    
     if (!_revolveImage) {
         _revolveImage = [[UIImageView alloc] init];
         [_revolveImage setContentScaleFactor:[[UIScreen mainScreen] scale]];
@@ -141,8 +149,8 @@
         _playButton = [UIButton buttonWithType:UIButtonTypeCustom];
         _playButton.selected = YES;
         [ self.view addSubview:_playButton];
-        [_playButton setImage:[UIImage imageNamed:@"startBtn_p"] forState:UIControlStateNormal];
-        [_playButton setImage:[UIImage imageNamed:@"startBtn_s"] forState:UIControlStateSelected];
+        [_playButton setBackgroundImage:[UIImage imageNamed:@"startBtn_p"] forState:UIControlStateNormal];
+        [_playButton setBackgroundImage:[UIImage imageNamed:@"startBtn_s"] forState:UIControlStateSelected];
         [_playButton addTarget:self action:@selector(playAction:) forControlEvents:UIControlEventTouchUpInside];
     }
     if (!_lastButton) {
@@ -161,6 +169,11 @@
 }
 
 - (void)viewsLocation{
+    [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.left.mas_equalTo(20);
+        make.top.mas_equalTo(20);
+        make.width.height.mas_equalTo(40);
+    }];
     [self.revolveImage mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerX.mas_equalTo(self.view.mas_centerX);
         make.top.mas_equalTo (60);
@@ -206,7 +219,7 @@
     }];
     [self.playButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.centerY.mas_equalTo(self.lastButton.mas_centerY);
-        make.width.height.mas_equalTo(40);
+        make.width.height.mas_equalTo(60);
         make.centerX.mas_equalTo(self.view.mas_centerX);
     }];
 }
@@ -251,6 +264,10 @@
         [self nextButtonAction:self.nextButton];
     }
     
+}
+
+- (void)backBtnAction {
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 
