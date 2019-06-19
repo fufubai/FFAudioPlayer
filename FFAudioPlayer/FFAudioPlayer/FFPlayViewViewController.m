@@ -60,6 +60,10 @@
     CMTime duration             = [FFPlayer musicTool].songItem.duration;
     CGFloat totalDuration       = CMTimeGetSeconds(duration);
     [self.playerProgress setProgress:timeInterval / totalDuration animated:NO];
+    
+    if (self.sliderProgress.value >= 0.9999) {
+        [self nextButtonAction:self.nextButton];
+    }
 }
 
 //转换时间的显示格式
@@ -243,7 +247,10 @@
     
 }
 - (void)durationSliderTouchEnded:(UISlider *)slider {
-    [self nextButtonAction:self.nextButton];
+    if (slider.value == 1) {
+        [self nextButtonAction:self.nextButton];
+    }
+    
 }
 
 
