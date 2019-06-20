@@ -42,7 +42,7 @@
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor grayColor];
     [self createView];
-    
+    [self addDownSwipeGesture];
     [self startPlay];
 }
 
@@ -68,10 +68,6 @@
         [self nextButtonAction:self.nextButton];
     }
     
-//    if (currentTime % 10 == 0) {
-//        [self revolveImageBeginRotate];
-//    }
-    
 }
 
 //转换时间的显示格式
@@ -93,19 +89,6 @@
 }
 
 #pragma mark - 创建视图
-//图片旋转功能
-- (void)createLayer {
-    CALayer *layer = [CALayer layer];
-    self.layer = layer;
-    [self.revolveImage.layer addSublayer:layer];
-    //设置layer属性
-    layer.frame = CGRectMake(0, 0, 235, 235);
-//    layer.frame = self.revolveImage.frame;
-//    layer.contents = (id)[UIImage imageNamed:@"subscribe_albumDetail_order"].CGImage;
-    layer.contents = (id)self.revolveImage.image.CGImage;
-}
-
-//创建视图
 - (void)createView{
     if (!_backButton) {
         _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -244,6 +227,17 @@
     }];
 }
 
+#pragma mark - 为界面添加向下滑动手势
+- (void)addDownSwipeGesture {
+    UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(handleSwipeFrom:)];
+    [recognizer setDirection:(UISwipeGestureRecognizerDirectionDown)];
+    [[self view] addGestureRecognizer:recognizer];
+}
+
+- (void)handleSwipeFrom:(UISwipeGestureRecognizer *)gesture {
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
 #pragma mark - 播放点击事件
 - (void)playAction:(UIButton *)btn {
     if (btn.selected) {
@@ -265,16 +259,12 @@
 }
 
 - (void)startPlay {
-//    self.animation = nil;
     NSDictionary *musicDic = self.musicArr[self.currentIndex];
-//    [_revolveImage sd_setImageWithURL:[NSURL URLWithString:musicDic[@"coverMiddle"]]];
     [_revolveImage sd_setImageWithURL:[NSURL URLWithString:musicDic[@"coverMiddle"]] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         [self createLayer];
-        self.revolveImage.image = nil;
         [self revolveImageBeginRotate];
     }];
     _musicTitleLabel.text = musicDic[@"title"];
-    
     if ([FFPlayer musicTool].isPlaying && [[FFPlayer musicTool].musicUrl isEqualToString:musicDic[@"playUrl64"]]) {
         [[FFPlayer musicTool] play];
     }else {
@@ -307,16 +297,26 @@
 }
 
 #pragma mark - 视图旋转功能
+- (void)createLayer {
+    if (!self.layer) {
+        CALayer *layer = [CALayer layer];
+        self.layer = layer;
+        [self.revolveImage.layer addSublayer:layer];
+        //设置layer属性
+        layer.frame = CGRectMake(0, 0, 235, 235);
+        layer.contents = (id)self.revolveImage.image.CGImage;
+    }
+}
 //点击旋转按钮的方法
 - (void)revolveImageBeginRotate {
-    [self makeBasicAnimation:@"transform.rotation" value:@(2*M_PI) valueType:@"by"];
+    if (!self.animation) {
+        [self makeBasicAnimation:@"transform.rotation" value:@(2*M_PI) valueType:@"by"];
+    }
 }
 - (void)makeBasicAnimation:(NSString *)keyPath value:(id)value valueType:(NSString *)type{
     //创建基本动画，以及动画的属性
     CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:keyPath];
     self.animation = animation;
-    //先慢后快
-//    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
     //匀速转动
     animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
     

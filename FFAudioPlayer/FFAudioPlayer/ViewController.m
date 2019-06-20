@@ -40,10 +40,8 @@
 
 - (void)loadData {
     NSString *url = @"http://mobile.ximalaya.com/mobile/v1/album?albumId=3021864&device=iPhone&pageSize=20&source=5&statEvent=pageview%2Falbum%403021864&statModule=听小说_幻想&statPage=categorytag%40听小说_幻想&statPosition=105";
-    
     [FFNetWorkTool doGetWithURLString:[url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]] params:nil success:^(id  _Nonnull response) {
         for (NSDictionary *dic in response[@"data"][@"tracks"][@"list"]) {
-            NSLog(@"%@",dic);
             [self.dataArray addObject:dic];
         }
         [self.tableView reloadData];
@@ -79,6 +77,7 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     FFPlayViewViewController *playerViewVC = [[FFPlayViewViewController alloc] init];
     playerViewVC.musicArr = self.dataArray;
+    playerViewVC.currentIndex = indexPath.row;
     [self presentViewController:playerViewVC animated:YES completion:nil];
 }
 
