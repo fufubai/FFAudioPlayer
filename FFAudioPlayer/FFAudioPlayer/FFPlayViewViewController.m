@@ -242,6 +242,7 @@
 - (void)playAction:(UIButton *)btn {
     if (btn.selected) {
         [[FFPlayer musicTool] pause];
+        self.musicIsPlaying(NO);
     }else {
         [[FFPlayer musicTool] play];
     }
@@ -270,6 +271,7 @@
     }else {
         [[FFPlayer musicTool] playWithMusicName:musicDic[@"playUrl64"]];
     }
+    self.musicIsPlaying(YES);
     self.timer = [self addMusicTimer];
 }
 

@@ -10,11 +10,14 @@
 #import "PrefixHeader.pch"
 #import <AFNetworking.h>
 #import "FFNetWorkTool.h"
+#import <Masonry.h>
 #import "FFPlayViewViewController.h"
 
 @interface ViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic,strong)UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *dataArray;
+
+@property (nonatomic,strong)UIImageView *liveImage;//动画图片
 @end
 
 @implementation ViewController
@@ -78,7 +81,28 @@
     FFPlayViewViewController *playerViewVC = [[FFPlayViewViewController alloc] init];
     playerViewVC.musicArr = self.dataArray;
     playerViewVC.currentIndex = indexPath.row;
+    [playerViewVC setMusicIsPlaying:^(BOOL isPlaying) {
+        if (isPlaying) {
+            [self addVoiceAnimation];
+        }else {
+            [self.liveImage stopAnimating];
+        }
+    }];
     [self presentViewController:playerViewVC animated:YES completion:nil];
+}
+
+#pragma mark - 添加声浪动画
+- (void)addVoiceAnimation {
+    self.navigationItem.titleView = nil;
+    self.liveImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"audio_live_image0"]];
+    NSArray *gifArray = [NSArray arrayWithObjects:[UIImage imageNamed:@"audio_live_image0"],[UIImage imageNamed:@"audio_live_image1"],[UIImage imageNamed:@"audio_live_image2"],[UIImage imageNamed:@"audio_live_image3"],[UIImage imageNamed:@"audio_live_image4"], nil];
+    self.liveImage.animationImages = gifArray;
+    self.liveImage.animationRepeatCount = 0;
+    self.liveImage.animationDuration = 0.5;
+    [self.liveImage startAnimating];
+    
+    self.liveImage.frame = CGRectMake(0, 0, 20, 20);
+    self.navigationItem.titleView = self.liveImage;
 }
 
 
