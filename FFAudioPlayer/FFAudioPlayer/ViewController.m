@@ -23,6 +23,7 @@
     // Do any additional setup after loading the view.
     [self setUpUI];
     [self loadData];
+    self.title = @"FFAudioPlayer";
 }
 
 - (NSMutableArray *)dataArray {

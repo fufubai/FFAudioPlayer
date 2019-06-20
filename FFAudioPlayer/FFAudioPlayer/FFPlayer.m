@@ -28,6 +28,7 @@ static dispatch_once_t _onceToken;
 // 播放音频
 - (void)playWithMusicName:(NSString *)musicName
 {
+    self.musicUrl = musicName;
     if ([musicName hasPrefix:@"http"]) {
         //1 网络音乐
         [self playWithMusicUrl:musicName];

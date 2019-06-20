@@ -31,6 +31,8 @@
 @property (nonatomic, strong) UIButton *backButton;
 
 @property (nonatomic,strong)NSTimer *timer;
+@property (nonatomic,strong)CALayer *layer;//图片旋转功能
+@property (nonatomic,strong)CABasicAnimation *animation;
 @end
 
 @implementation FFPlayViewViewController
@@ -40,7 +42,6 @@
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor grayColor];
     [self createView];
-    self.timer = [self addMusicTimer];
     
     [self startPlay];
 }
@@ -67,6 +68,10 @@
         [self nextButtonAction:self.nextButton];
     }
     
+//    if (currentTime % 10 == 0) {
+//        [self revolveImageBeginRotate];
+//    }
+    
 }
 
 //转换时间的显示格式
@@ -88,6 +93,19 @@
 }
 
 #pragma mark - 创建视图
+//图片旋转功能
+- (void)createLayer {
+    CALayer *layer = [CALayer layer];
+    self.layer = layer;
+    [self.revolveImage.layer addSublayer:layer];
+    //设置layer属性
+    layer.frame = CGRectMake(0, 0, 235, 235);
+//    layer.frame = self.revolveImage.frame;
+//    layer.contents = (id)[UIImage imageNamed:@"subscribe_albumDetail_order"].CGImage;
+    layer.contents = (id)self.revolveImage.image.CGImage;
+}
+
+//创建视图
 - (void)createView{
     if (!_backButton) {
         _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -141,7 +159,7 @@
     }
     if (!_musicTitleLabel) {
         _musicTitleLabel = [[UILabel alloc] init];
-        _musicTitleLabel.font = [UIFont systemFontOfSize:11];
+        _musicTitleLabel.font = [UIFont systemFontOfSize:15];
         _musicTitleLabel.text = @"青岛DJ皇阿玛";
         _musicTitleLabel.textColor = [UIColor whiteColor];
         _musicTitleLabel.textAlignment = NSTextAlignmentCenter;
@@ -247,16 +265,22 @@
 }
 
 - (void)startPlay {
-    
+//    self.animation = nil;
     NSDictionary *musicDic = self.musicArr[self.currentIndex];
-    [_revolveImage sd_setImageWithURL:[NSURL URLWithString:musicDic[@"coverMiddle"]]];
+//    [_revolveImage sd_setImageWithURL:[NSURL URLWithString:musicDic[@"coverMiddle"]]];
+    [_revolveImage sd_setImageWithURL:[NSURL URLWithString:musicDic[@"coverMiddle"]] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+        [self createLayer];
+        self.revolveImage.image = nil;
+        [self revolveImageBeginRotate];
+    }];
     _musicTitleLabel.text = musicDic[@"title"];
     
-    if ([FFPlayer musicTool].isPlaying) {
+    if ([FFPlayer musicTool].isPlaying && [[FFPlayer musicTool].musicUrl isEqualToString:musicDic[@"playUrl64"]]) {
         [[FFPlayer musicTool] play];
     }else {
         [[FFPlayer musicTool] playWithMusicName:musicDic[@"playUrl64"]];
     }
+    self.timer = [self addMusicTimer];
 }
 
 - (void)durationSliderTouch:(UISlider *)slider {
@@ -280,6 +304,43 @@
 - (void)dealloc {
     [self.timer invalidate];
     self.timer = nil;
+}
+
+#pragma mark - 视图旋转功能
+//点击旋转按钮的方法
+- (void)revolveImageBeginRotate {
+    [self makeBasicAnimation:@"transform.rotation" value:@(2*M_PI) valueType:@"by"];
+}
+- (void)makeBasicAnimation:(NSString *)keyPath value:(id)value valueType:(NSString *)type{
+    //创建基本动画，以及动画的属性
+    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:keyPath];
+    self.animation = animation;
+    //先慢后快
+//    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];
+    //匀速转动
+    animation.timingFunction = [CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionLinear];
+    
+    //设置动画属性的值
+    if ([type isEqualToString:@"to"]) {
+        animation.toValue = value;
+    }else if([type isEqualToString:@"by"]){
+        animation.byValue = value;
+    }
+    //设置动画时间
+    animation.duration = 20;
+    animation.repeatCount = HUGE_VALF;
+    //动画终了后不返回初始状态
+    animation.removedOnCompletion = NO;
+    animation.fillMode = kCAFillModeForwards;
+    //将动画加入到layer中
+    [self.layer addAnimation:animation forKey:nil];
+    
+    [self performSelector:@selector(animationEnd) withObject:nil afterDelay:1];
+    
+}
+//动画结束的方法 (获取逆序数据)
+- (void)animationEnd {
+    
 }
 
 
