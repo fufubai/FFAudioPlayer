@@ -46,48 +46,6 @@
     [self startPlay];
 }
 
-#pragma mark - 添加定时器显示时间和进度条
-- (NSTimer *)addMusicTimer {
-    return [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(timerRun) userInfo:nil repeats:YES];
-}
-
-- (void)timerRun {
-    NSInteger currentTime = [[FFPlayer musicTool] currentTime];
-    self.nowTimeLabel.text = [NSString stringWithFormat:@"%@",[self changeTimeToStr:currentTime]];
-    NSInteger totalTime = [[FFPlayer musicTool] totalTime];
-    self.totalTimeLabel.text = [NSString stringWithFormat:@"%@",[self changeTimeToStr:totalTime]];
-    //slider显示
-    self.sliderProgress.value = [[FFPlayer musicTool] progress];
-    // 计算缓冲进度
-    NSTimeInterval timeInterval = [self availableDuration];
-    CMTime duration             = [FFPlayer musicTool].songItem.duration;
-    CGFloat totalDuration       = CMTimeGetSeconds(duration);
-    [self.playerProgress setProgress:timeInterval / totalDuration animated:NO];
-    
-    if (self.sliderProgress.value >= 0.9999) {
-        [self nextButtonAction:self.nextButton];
-    }
-    
-}
-
-//转换时间的显示格式
-- (NSString *)changeTimeToStr:(NSInteger)time {
-    NSInteger second = time % 60;
-    NSInteger minute = time / 60;
-    NSString *showTime = [NSString stringWithFormat:@"%02ld:%02ld",minute,second];
-    return showTime;
-}
-
-//计算缓冲进度
-- (NSTimeInterval)availableDuration {
-    NSArray *loadedTimeRanges = [[FFPlayer musicTool].songItem loadedTimeRanges];
-    CMTimeRange timeRange     = [loadedTimeRanges.firstObject CMTimeRangeValue];// 获取缓冲区域
-    float startSeconds        = CMTimeGetSeconds(timeRange.start);
-    float durationSeconds     = CMTimeGetSeconds(timeRange.duration);
-    NSTimeInterval result     = startSeconds + durationSeconds;// 计算缓冲总进度
-    return result;
-}
-
 #pragma mark - 创建视图
 - (void)createView{
     if (!_backButton) {
@@ -243,8 +201,10 @@
     if (btn.selected) {
         [[FFPlayer musicTool] pause];
         self.musicIsPlaying(NO);
+        [self animationPause];
     }else {
         [[FFPlayer musicTool] play];
+        [self animationContinue];
     }
     btn.selected = !btn.selected;
 }
@@ -252,14 +212,21 @@
 - (void)lastButtonAction:(UIButton *)btn {
     self.currentIndex--;
     [self startPlay];
+    if (self.layer.speed == 0) {
+        [self animationContinue];
+    }
 }
 
 - (void)nextButtonAction:(UIButton *)btn {
     self.currentIndex++;
     [self startPlay];
+    if (self.layer.speed == 0) {
+        [self animationContinue];
+    }
 }
 
 - (void)startPlay {
+    self.playButton.selected = YES;
     NSDictionary *musicDic = self.musicArr[self.currentIndex];
     [_revolveImage sd_setImageWithURL:[NSURL URLWithString:musicDic[@"coverMiddle"]] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         [self createLayer];
@@ -275,6 +242,7 @@
     self.timer = [self addMusicTimer];
 }
 
+//拖动slider
 - (void)durationSliderTouch:(UISlider *)slider {
     NSInteger totalTime = [[FFPlayer musicTool] totalTime];
     NSInteger seekTime = slider.value * totalTime;
@@ -286,11 +254,52 @@
     if (slider.value == 1) {
         [self nextButtonAction:self.nextButton];
     }
-    
 }
 
 - (void)backBtnAction {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - 添加定时器显示时间和进度条
+- (NSTimer *)addMusicTimer {
+    return [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(timerRun) userInfo:nil repeats:YES];
+}
+
+- (void)timerRun {
+    NSInteger currentTime = [[FFPlayer musicTool] currentTime];
+    self.nowTimeLabel.text = [NSString stringWithFormat:@"%@",[self changeTimeToStr:currentTime]];
+    NSInteger totalTime = [[FFPlayer musicTool] totalTime];
+    self.totalTimeLabel.text = [NSString stringWithFormat:@"%@",[self changeTimeToStr:totalTime]];
+    //slider显示
+    self.sliderProgress.value = [[FFPlayer musicTool] progress];
+    // 计算缓冲进度
+    NSTimeInterval timeInterval = [self availableDuration];
+    CMTime duration             = [FFPlayer musicTool].songItem.duration;
+    CGFloat totalDuration       = CMTimeGetSeconds(duration);
+    [self.playerProgress setProgress:timeInterval / totalDuration animated:NO];
+    
+    if (self.sliderProgress.value >= 0.9999) {
+        [self nextButtonAction:self.nextButton];
+    }
+    
+}
+
+//转换时间的显示格式
+- (NSString *)changeTimeToStr:(NSInteger)time {
+    NSInteger second = time % 60;
+    NSInteger minute = time / 60;
+    NSString *showTime = [NSString stringWithFormat:@"%02ld:%02ld",minute,second];
+    return showTime;
+}
+
+//计算缓冲进度
+- (NSTimeInterval)availableDuration {
+    NSArray *loadedTimeRanges = [[FFPlayer musicTool].songItem loadedTimeRanges];
+    CMTimeRange timeRange     = [loadedTimeRanges.firstObject CMTimeRangeValue];// 获取缓冲区域
+    float startSeconds        = CMTimeGetSeconds(timeRange.start);
+    float durationSeconds     = CMTimeGetSeconds(timeRange.duration);
+    NSTimeInterval result     = startSeconds + durationSeconds;// 计算缓冲总进度
+    return result;
 }
 
 - (void)dealloc {
@@ -345,6 +354,32 @@
     
 }
 
+//暂停动画
+- (void)animationPause {
+    // 当前时间（暂停时的时间）
+    // CACurrentMediaTime() 是基于内建时钟的，能够更精确更原子化地测量，并且不会因为外部时间变化而变化（例如时区变化、夏时制、秒突变等）,但它和系统的uptime有关,系统重启后CACurrentMediaTime()会被重置
+    CFTimeInterval pauseTime = [self.layer convertTime:CACurrentMediaTime() fromLayer:nil];
+    // 停止动画
+    self.layer.speed = 0;
+    // 动画的位置（动画进行到当前时间所在的位置，如timeOffset=1表示动画进行1秒时的位置）
+    self.layer.timeOffset = pauseTime;
+}
+//继续动画
+- (void)animationContinue {
+    // 动画的暂停时间
+    CFTimeInterval pausedTime = self.layer.timeOffset;
+    // 动画初始化
+    self.layer.speed = 1;
+    self.layer.timeOffset = 0;
+    self.layer.beginTime = 0;
+    // 程序到这里，动画就能继续进行了，但不是连贯的，而是动画在背后默默“偷跑”的位置，如果超过一个动画周期，则是初始位置
+    // 当前时间（恢复时的时间）
+    CFTimeInterval continueTime = [self.layer convertTime:CACurrentMediaTime() fromLayer:nil];
+    // 暂停到恢复之间的空档
+    CFTimeInterval timePause = continueTime - pausedTime;
+    // 动画从timePause的位置从动画头开始
+    self.layer.beginTime = timePause;
+}
 
 
 @end

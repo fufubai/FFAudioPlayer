@@ -72,6 +72,7 @@
     if (!cell) {
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:reuse];
     }
+    cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSDictionary *dic = self.dataArray[indexPath.row];
     cell.textLabel.text = dic[@"title"];
     
@@ -102,7 +103,7 @@
     [self.liveImage startAnimating];
     
     self.liveImage.frame = CGRectMake(0, 0, 20, 20);
-    self.navigationItem.titleView = self.liveImage;
+    self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.liveImage];
 }
 
 
