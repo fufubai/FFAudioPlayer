@@ -16,6 +16,7 @@
 @interface ViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic,strong)UITableView *tableView;
 @property (nonatomic, strong) NSMutableArray *dataArray;
+@property (nonatomic,strong)FFPlayViewViewController *playerViewVC;
 
 @property (nonatomic,strong)UIImageView *liveImage;//动画图片
 @end
@@ -79,17 +80,7 @@
     return cell;
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    FFPlayViewViewController *playerViewVC = [[FFPlayViewViewController alloc] init];
-    playerViewVC.musicArr = self.dataArray;
-    playerViewVC.currentIndex = indexPath.row;
-    [playerViewVC setMusicIsPlaying:^(BOOL isPlaying) {
-        if (isPlaying) {
-            [self addVoiceAnimation];
-        }else {
-            [self.liveImage stopAnimating];
-        }
-    }];
-    [self presentViewController:playerViewVC animated:YES completion:nil];
+    [self presentToPlayVC:indexPath.row];
 }
 
 #pragma mark - 添加声浪动画
@@ -104,7 +95,31 @@
     
     self.liveImage.frame = CGRectMake(0, 0, 20, 20);
     self.navigationItem.leftBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:self.liveImage];
+    
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(gotoPlayVC:)];
+    [self.liveImage addGestureRecognizer:tap];
+    self.liveImage.userInteractionEnabled = YES;
 }
+
+- (void)gotoPlayVC:(UITapGestureRecognizer *)tap {
+    [self presentToPlayVC:self.playerViewVC.currentIndex];
+}
+
+- (void)presentToPlayVC:(NSInteger)index {
+    FFPlayViewViewController *playerViewVC = [[FFPlayViewViewController alloc] init];
+    self.playerViewVC = playerViewVC;
+    playerViewVC.musicArr = self.dataArray;
+    playerViewVC.currentIndex = index;
+    [playerViewVC setMusicIsPlaying:^(BOOL isPlaying) {
+        if (isPlaying) {
+            [self addVoiceAnimation];
+        }else {
+            [self.liveImage stopAnimating];
+        }
+    }];
+    [self presentViewController:playerViewVC animated:YES completion:nil];
+}
+
 
 
 @end

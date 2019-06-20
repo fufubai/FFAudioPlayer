@@ -233,7 +233,7 @@
         [self revolveImageBeginRotate];
     }];
     _musicTitleLabel.text = musicDic[@"title"];
-    if ([FFPlayer musicTool].isPlaying && [[FFPlayer musicTool].musicUrl isEqualToString:musicDic[@"playUrl64"]]) {
+    if ([[FFPlayer musicTool].musicUrl isEqualToString:musicDic[@"playUrl64"]]) {
         [[FFPlayer musicTool] play];
     }else {
         [[FFPlayer musicTool] playWithMusicName:musicDic[@"playUrl64"]];
