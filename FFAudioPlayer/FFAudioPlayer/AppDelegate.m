@@ -8,6 +8,7 @@
 
 #import "AppDelegate.h"
 #import "ViewController.h"
+#import "PrefixHeader.pch"
 
 @interface AppDelegate ()
 
@@ -22,6 +23,7 @@
     UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:viewVC];
     self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
     self.window.rootViewController = nav;
+    [FFSQLiteTool createTable];//创建SQLite数据库
     return YES;
 }
 

@@ -28,6 +28,11 @@ typedef void(^successData)(id response);
  */
 + (void)doGetWithURLString:(NSString *)urlString params:(id _Nullable)params success:(successData)success;
 
+/**
+ *  创建下载请求
+ */
++ (void)DownloadAudioWithUrlString:(NSString *)urlString params:(id _Nullable)params success:(successData)success;
+
 @end
 
 NS_ASSUME_NONNULL_END

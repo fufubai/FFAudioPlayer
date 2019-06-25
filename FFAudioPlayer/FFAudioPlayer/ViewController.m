@@ -12,6 +12,7 @@
 #import "FFNetWorkTool.h"
 #import <Masonry.h>
 #import "FFPlayViewViewController.h"
+#import "FFDownloadListViewController.h"
 
 @interface ViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic,strong)UITableView *tableView;
@@ -40,6 +41,7 @@
 - (void)setUpUI {
     self.view.backgroundColor = [UIColor whiteColor];
     [self prepareTableView];
+    [self prepareDownloadBtnlist];
 }
 
 - (void)loadData {
@@ -58,6 +60,18 @@
     [self.view addSubview:self.tableView];
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
+}
+
+//右上角进入下载界面的按钮
+- (void)prepareDownloadBtnlist {
+    UIButton *downloadListBtn = [[UIButton alloc] init];
+    [downloadListBtn setImage:[UIImage imageNamed:@"download"] forState:UIControlStateNormal];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:downloadListBtn];
+    [downloadListBtn addTarget:self action:@selector(downloadListBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+}
+- (void)downloadListBtnClick:(UIButton *)btn {
+    FFDownloadListViewController *downloadListVC = [[FFDownloadListViewController alloc] init];
+    [self.navigationController pushViewController:downloadListVC animated:YES];
 }
 
 #pragma mark - tableView 代理方法和数据源方法
@@ -110,11 +124,12 @@
     self.playerViewVC = playerViewVC;
     playerViewVC.musicArr = self.dataArray;
     playerViewVC.currentIndex = index;
+    __weak typeof(self) weakSelf = self;
     [playerViewVC setMusicIsPlaying:^(BOOL isPlaying) {
         if (isPlaying) {
             [self addVoiceAnimation];
         }else {
-            [self.liveImage stopAnimating];
+            [weakSelf.liveImage stopAnimating];
         }
     }];
     [self presentViewController:playerViewVC animated:YES completion:nil];

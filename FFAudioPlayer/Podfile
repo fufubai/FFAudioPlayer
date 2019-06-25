@@ -9,4 +9,5 @@ target 'FFAudioPlayer' do
 pod 'AFNetworking'
 pod "Masonry"
 pod "SDWebImage"
+pod 'FMDB'
 end

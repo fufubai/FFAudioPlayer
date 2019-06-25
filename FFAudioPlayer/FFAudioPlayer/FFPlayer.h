@@ -14,11 +14,15 @@ NS_ASSUME_NONNULL_BEGIN
 @interface FFPlayer : NSObject
 
 @property (nonatomic, strong) AVPlayer  *avPlayer;//播放网络音频
+@property (nonatomic, strong) AVAudioPlayer  *audioPlayer;//播放网络音频
 @property (nonatomic,strong)AVPlayerItem * songItem;
 @property (nonatomic,assign)BOOL isPlaying;//播放状态
 @property (nonatomic,copy)NSString *musicUrl;
 
-- (void)playWithMusicName:(NSString *)musicUrl;
+- (void)playWithMusicName:(NSString *)musicName withType:(BOOL)isLocal;
+- (void)playWithMusicUrl:(NSString *)musicUrl;
+- (void)playLocalMusic:(NSData *)musicData;
+
 +(instancetype)musicTool;
 
 - (void)pause;

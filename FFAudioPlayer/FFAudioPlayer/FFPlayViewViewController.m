@@ -10,6 +10,8 @@
 #import <Masonry.h>
 #import <SDWebImage.h>
 #import "FFPlayer.h"
+#import "FFNetWorkTool.h"
+#import "PrefixHeader.pch"
 
 @interface FFPlayViewViewController ()
 @property (nonatomic, assign) CGFloat playbackTime;
@@ -29,10 +31,14 @@
 @property (nonatomic, strong) UIButton *lastButton;
 @property (nonatomic, strong) UIButton *nextButton;
 @property (nonatomic, strong) UIButton *backButton;
+@property (nonatomic, strong) UIButton *downloadButton;//下载按钮
 
 @property (nonatomic,strong)NSTimer *timer;
 @property (nonatomic,strong)CALayer *layer;//图片旋转功能
 @property (nonatomic,strong)CABasicAnimation *animation;
+
+@property (nonatomic,strong)NSDictionary *musicDic;//音频数据
+@property (nonatomic,strong)NSMutableArray *musicMArr;//保存本地音频数据
 @end
 
 @implementation FFPlayViewViewController
@@ -44,6 +50,21 @@
     [self createView];
     [self addDownSwipeGesture];
     [self startPlay];
+    [self createMutableAudioArray];
+}
+
+//创建一个存放音频数据的数组
+- (void)createMutableAudioArray {
+    if (!self.musicMArr) {
+        NSMutableArray *musicMArr = [NSMutableArray array];
+        self.musicMArr = musicMArr;
+        //获取NSUserDefaults对象
+        NSUserDefaults *defaults = [NSUserDefaults standardUserDefaults];
+        //保存数据
+        [defaults setObject:musicMArr forKey:@"audioNameArray"];
+        //同步数据
+        [defaults synchronize];
+    }
 }
 
 #pragma mark - 创建视图
@@ -54,7 +75,14 @@
         [_backButton setImage:[UIImage imageNamed:@"backBtn"] forState:UIControlStateNormal];
         [_backButton addTarget:self action:@selector(backBtnAction) forControlEvents:UIControlEventTouchUpInside];
     }
-    
+    if (!_downloadButton) {
+        _downloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self.view addSubview:_downloadButton];
+        [_downloadButton addTarget:self action:@selector(downloadButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+        [_downloadButton setImage:[UIImage imageNamed:@"download"] forState:UIControlStateNormal];
+        [_downloadButton setImage:[UIImage imageNamed:@"downloading"] forState:UIControlStateSelected];
+        [_downloadButton setImage:[UIImage imageNamed:@"downloaded"] forState:UIControlStateDisabled];
+    }
     if (!_revolveImage) {
         _revolveImage = [[UIImageView alloc] init];
         [_revolveImage setContentScaleFactor:[[UIScreen mainScreen] scale]];
@@ -126,12 +154,18 @@
         [_nextButton addTarget:self action:@selector(nextButtonAction:) forControlEvents:UIControlEventTouchUpInside];
         [_nextButton setImage:[UIImage imageNamed:@"startBtn_right"] forState:UIControlStateNormal];
     }
+    
     [self viewsLocation];
 }
 
 - (void)viewsLocation{
     [self.backButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.left.mas_equalTo(20);
+        make.top.mas_equalTo(20);
+        make.width.height.mas_equalTo(40);
+    }];
+    [self.downloadButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(-20);
         make.top.mas_equalTo(20);
         make.width.height.mas_equalTo(40);
     }];
@@ -228,15 +262,38 @@
 - (void)startPlay {
     self.playButton.selected = YES;
     NSDictionary *musicDic = self.musicArr[self.currentIndex];
-    [_revolveImage sd_setImageWithURL:[NSURL URLWithString:musicDic[@"coverMiddle"]] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+    NSLog(@"===dictionary:%@",musicDic);
+    self.musicDic = musicDic;
+    NSString *picUrl;
+    if (self.isLocal) {
+        NSDictionary *musicDic = [NSDictionary dictionary];
+        musicDic = [FFSQLiteTool queryDownloadMusicWithPrimaryKey:[NSString stringWithFormat: @"%ld",self.currentIndex+1]];
+        picUrl = [musicDic objectForKey:@"pictureUrl"];
+    }else {
+        picUrl = musicDic[@"coverMiddle"];
+    }
+    [_revolveImage sd_setImageWithURL:[NSURL URLWithString:picUrl] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
         [self createLayer];
         [self revolveImageBeginRotate];
     }];
-    _musicTitleLabel.text = musicDic[@"title"];
-    if ([[FFPlayer musicTool].musicUrl isEqualToString:musicDic[@"playUrl64"]]) {
+    _musicTitleLabel.text = musicDic[@"titleName"];
+    NSString *stringPath = musicDic[@"playUrl64"];
+    if ([[FFPlayer musicTool].musicUrl isEqualToString:stringPath]) {
         [[FFPlayer musicTool] play];
     }else {
-        [[FFPlayer musicTool] playWithMusicName:musicDic[@"playUrl64"]];
+        if (self.isLocal) {
+            NSMutableDictionary *dic = self.musicArr[self.currentIndex];
+            NSData *musicData = [dic objectForKey:@"musicData"];
+            [[FFPlayer musicTool] playLocalMusic:musicData];
+        }else {
+            if ([[FFPlayer musicTool].musicUrl isEqualToString:stringPath]) {
+                [[FFPlayer musicTool] play];
+            }else {
+                [[FFPlayer musicTool] playWithMusicUrl:stringPath];
+            }
+            
+        }
+        
     }
     self.musicIsPlaying(YES);
     self.timer = [self addMusicTimer];
@@ -258,6 +315,18 @@
 
 - (void)backBtnAction {
     [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+#pragma mark - 下载功能（储存到沙盒documents）
+- (void)downloadButtonAction:(UIButton *)btn {
+    btn.selected = YES;
+    NSString *downloadUrl = self.musicDic[@"playUrl64"];
+    __weak typeof(self) weakSelf = self;
+    [FFNetWorkTool DownloadAudioWithUrlString:downloadUrl params:nil success:^(id  _Nonnull response) {
+        weakSelf.downloadButton.enabled = NO;
+        NSData *musicData =[NSData dataWithContentsOfFile:response];
+        [FFSQLiteTool addDownloadMusicWithTitleName:self.musicDic[@"title"] musicUrl:self.musicDic[@"playUrl64"] pictureUrl:self.musicDic[@"coverMiddle"] data:musicData];
+    }];
 }
 
 #pragma mark - 添加定时器显示时间和进度条

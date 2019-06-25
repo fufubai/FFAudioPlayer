@@ -19,6 +19,8 @@ typedef void(^musicIsPlaying)(BOOL isPlaying);
 @property (nonatomic,strong)NSArray *musicArr;
 @property (nonatomic,assign)NSInteger currentIndex;
 
+@property (nonatomic,assign)BOOL isLocal;//本地音频
+
 @end
 
 NS_ASSUME_NONNULL_END

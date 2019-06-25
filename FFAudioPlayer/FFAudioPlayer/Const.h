@@ -17,3 +17,6 @@
 //NS_ASSUME_NONNULL_END
 #define SCREENWIDTH [UIScreen mainScreen].bounds.size.width
 #define SCREENHEIGHT [UIScreen mainScreen].bounds.size.height
+
+//沙盒音频数组name
+#define AUDIOARRAY audioNameArrayXML.xml

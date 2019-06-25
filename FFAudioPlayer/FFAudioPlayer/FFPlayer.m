@@ -25,24 +25,12 @@ static dispatch_once_t _onceToken;
     return _INSTANCE;
 }
 
-// 播放音频
-- (void)playWithMusicName:(NSString *)musicName
-{
-    self.musicUrl = musicName;
-    if ([musicName hasPrefix:@"http"]) {
-        //1 网络音乐
-        [self playWithMusicUrl:musicName];
-    }else{
-        //2 本地音乐
-        [self playLocalMusic:musicName];
-    }
-}
-
 // 播放网络音频
 - (void)playWithMusicUrl:(NSString *)musicUrl {
     if (musicUrl == nil) {
         return;
     }
+    self.musicUrl = musicUrl;
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
         //创建一个音乐播放器 对象
         NSURL *url = [NSURL URLWithString:musicUrl];
@@ -52,38 +40,36 @@ static dispatch_once_t _onceToken;
             self.avPlayer = [[AVPlayer alloc]initWithPlayerItem:self.songItem];
             [self.avPlayer play];
         }
+        
         self.isPlaying = YES;
     });
 }
 
 // 播放本地音频
-- (void)playLocalMusic:(NSString *)musicName {
-    if (musicName == nil) {
-        return;
+- (void)playLocalMusic:(NSData *)musicData {
+//    NSURL *urlFile = [NSURL fileURLWithPath:filePath];
+    self.audioPlayer = [[AVAudioPlayer alloc] initWithData:musicData error:nil];
+    if (self.audioPlayer)
+    {
+        if ([self.audioPlayer prepareToPlay])
+        {
+            // 播放时，设置喇叭播放否则音量很小
+            AVAudioSession *playSession = [AVAudioSession sharedInstance];
+            [playSession setCategory:AVAudioSessionCategoryPlayback error:nil];
+            [playSession setActive:YES error:nil];
+            
+            [self.audioPlayer play];
+        }
     }
-    //获取mp3的路径
-    NSString *path = nil;
-    if ([musicName hasPrefix:@"/Users"] || [musicName hasPrefix:@"/var"] || [musicName hasPrefix:@"file"]) {
-        path = musicName;
-    }else{
-        path = [[NSBundle mainBundle]pathForResource:musicName ofType:nil];
-    }
-    if (path == nil) {
-        return;
-    }
-    
-    //初始化player对象
-    NSURL *url = [NSURL fileURLWithPath:path];
-    self.avPlayer = [[AVPlayer alloc] initWithURL:url];
-    [self.avPlayer play];
 }
 
-- (void)pause; {
+
+- (void)pause {
     self.isPlaying = NO;
     [self.avPlayer pause];
 }
 
-- (void)play; {
+- (void)play {
     self.isPlaying = YES;
     [self.avPlayer play];
 }

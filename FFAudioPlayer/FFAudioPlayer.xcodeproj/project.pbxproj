@@ -15,6 +15,9 @@
 		ED26682322B776B000243735 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = ED26682122B776B000243735 /* LaunchScreen.storyboard */; };
 		ED26682622B776B000243735 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = ED26682522B776B000243735 /* main.m */; };
 		ED26683322B7868F00243735 /* FFNetWorkTool.m in Sources */ = {isa = PBXBuildFile; fileRef = ED26683222B7868F00243735 /* FFNetWorkTool.m */; };
+		ED707BE522C20DBD00CCEDB3 /* FFSQLiteTool.m in Sources */ = {isa = PBXBuildFile; fileRef = ED707BE422C20DBD00CCEDB3 /* FFSQLiteTool.m */; };
+		ED707BE922C20EA000CCEDB3 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = ED707BE822C20EA000CCEDB3 /* libsqlite3.tbd */; };
+		ED77880A22BB78B5008A0E6F /* FFDownloadListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED77880922BB78B5008A0E6F /* FFDownloadListViewController.m */; };
 		ED8F7CCE22B8CCC100C9544B /* FFPlayViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED8F7CCD22B8CCC100C9544B /* FFPlayViewViewController.m */; };
 		ED8F7CD222B8E53900C9544B /* FFPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ED8F7CD122B8E53900C9544B /* FFPlayer.m */; };
 /* End PBXBuildFile section */
@@ -37,6 +40,12 @@
 		ED26682D22B77CFD00243735 /* Const.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Const.h; sourceTree = "<group>"; };
 		ED26683122B7868F00243735 /* FFNetWorkTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFNetWorkTool.h; sourceTree = "<group>"; };
 		ED26683222B7868F00243735 /* FFNetWorkTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFNetWorkTool.m; sourceTree = "<group>"; };
+		ED707BE322C20DBD00CCEDB3 /* FFSQLiteTool.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFSQLiteTool.h; sourceTree = "<group>"; };
+		ED707BE422C20DBD00CCEDB3 /* FFSQLiteTool.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFSQLiteTool.m; sourceTree = "<group>"; };
+		ED707BE622C20E6C00CCEDB3 /* libsqlite3.0.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.0.tbd; path = usr/lib/libsqlite3.0.tbd; sourceTree = SDKROOT; };
+		ED707BE822C20EA000CCEDB3 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
+		ED77880822BB78B5008A0E6F /* FFDownloadListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFDownloadListViewController.h; sourceTree = "<group>"; };
+		ED77880922BB78B5008A0E6F /* FFDownloadListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFDownloadListViewController.m; sourceTree = "<group>"; };
 		ED8F7CCC22B8CCC100C9544B /* FFPlayViewViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFPlayViewViewController.h; sourceTree = "<group>"; };
 		ED8F7CCD22B8CCC100C9544B /* FFPlayViewViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFPlayViewViewController.m; sourceTree = "<group>"; };
 		ED8F7CD022B8E53900C9544B /* FFPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFPlayer.h; sourceTree = "<group>"; };
@@ -48,6 +57,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED707BE922C20EA000CCEDB3 /* libsqlite3.tbd in Frameworks */,
 				449FDDE3771546EE11F9CBAD /* libPods-FFAudioPlayer.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -58,6 +68,8 @@
 		2E1DF133987A6604A12FC2B7 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				ED707BE822C20EA000CCEDB3 /* libsqlite3.tbd */,
+				ED707BE622C20E6C00CCEDB3 /* libsqlite3.0.tbd */,
 				3C5E418BE498A63D0F6DA055 /* libPods-FFAudioPlayer.a */,
 			);
 			name = Frameworks;
@@ -99,8 +111,12 @@
 				ED26681A22B776AE00243735 /* ViewController.m */,
 				ED8F7CCC22B8CCC100C9544B /* FFPlayViewViewController.h */,
 				ED8F7CCD22B8CCC100C9544B /* FFPlayViewViewController.m */,
+				ED77880822BB78B5008A0E6F /* FFDownloadListViewController.h */,
+				ED77880922BB78B5008A0E6F /* FFDownloadListViewController.m */,
 				ED8F7CD022B8E53900C9544B /* FFPlayer.h */,
 				ED8F7CD122B8E53900C9544B /* FFPlayer.m */,
+				ED707BE322C20DBD00CCEDB3 /* FFSQLiteTool.h */,
+				ED707BE422C20DBD00CCEDB3 /* FFSQLiteTool.m */,
 				ED26683122B7868F00243735 /* FFNetWorkTool.h */,
 				ED26683222B7868F00243735 /* FFNetWorkTool.m */,
 				ED26681C22B776AE00243735 /* Main.storyboard */,
@@ -239,9 +255,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				ED26681B22B776AE00243735 /* ViewController.m in Sources */,
+				ED77880A22BB78B5008A0E6F /* FFDownloadListViewController.m in Sources */,
 				ED26682622B776B000243735 /* main.m in Sources */,
 				ED8F7CD222B8E53900C9544B /* FFPlayer.m in Sources */,
 				ED26683322B7868F00243735 /* FFNetWorkTool.m in Sources */,
+				ED707BE522C20DBD00CCEDB3 /* FFSQLiteTool.m in Sources */,
 				ED8F7CCE22B8CCC100C9544B /* FFPlayViewViewController.m in Sources */,
 				ED26681822B776AE00243735 /* AppDelegate.m in Sources */,
 			);
