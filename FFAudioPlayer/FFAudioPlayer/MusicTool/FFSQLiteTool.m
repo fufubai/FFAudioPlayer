@@ -30,9 +30,9 @@ static FMDatabase *_db;
 }
 
 //添加音频下载文件
-+ (void)addDownloadMusicWithTitleName:(NSString *)titleName musicUrl:(NSString *)urlString pictureData:(NSData *)picData musicData:(NSData *)musicData{
++ (void)addDownloadMusicWithTitleName:(NSString *)titleName musicUrl:(NSString *)musicUrl pictureData:(NSData *)picData musicData:(NSData *)musicData{
     if ([_db open]) {
-        int count = [_db executeUpdateWithFormat:@"INSERT INTO t_download_music(titleName,musicUrl,musicData,picData) VALUES(%@,%@,%@,%@)",titleName,urlString,musicData,picData];
+        int count = [_db executeUpdateWithFormat:@"INSERT INTO t_download_music(titleName,musicUrl,musicData,picData) VALUES(%@,%@,%@,%@)",titleName,musicUrl,musicData,picData];
 //        int count = [_db executeUpdateWithFormat:@"INSERT INTO t_download_music(titleName,musicUrl,pictureUrl) VALUES(%@,%@,%@)",titleName,urlString,picString];
         
         if (count > 0) {
@@ -45,18 +45,20 @@ static FMDatabase *_db;
 }
 
 //查询此音频是否存在
-+ (NSDictionary *)queryDownloadMusicWithPrimaryKey:(NSString *)key{
++ (NSDictionary *)queryDownloadMusicWithTitleName:(NSString *)titleName{
+    NSDictionary *resultDic = [NSDictionary dictionary];
     if ([_db open]) {
-        FMResultSet *set = [_db executeQueryWithFormat:@"SELECT * FROM t_download_music WHERE id=%@", key];
+        FMResultSet *set = [_db executeQueryWithFormat:@"SELECT * FROM t_download_music WHERE titleName=%@", titleName];
         if ([set next]) {
-            NSDictionary *resultDic = @{@"titleName":[set objectForColumn:@"titleName"],@"musicData":[set objectForColumn:@"musicData"],@"picData":[set objectForColumn:@"picData"],@"musicUrl":[set objectForColumn:@"musicUrl"]};
+            resultDic = @{@"isExist":@(1),@"titleName":[set objectForColumn:@"titleName"],@"musicData":[set objectForColumn:@"musicData"],@"picData":[set objectForColumn:@"picData"],@"musicUrl":[set objectForColumn:@"musicUrl"]};
             return resultDic;
         }
     }
     [_db close];
-    return nil;
+    resultDic = @{@"isExist":@(0)};
+    return resultDic;
 }
-//根据下标删除某条音频
+//根据title删除某条音频
 + (BOOL)deleteDownloadMusicWithMusicUrl:(NSString *)musicUrl {
     if ([_db open]) {
         int count = [_db executeUpdateWithFormat:@"DELETE FROM t_download_music WHERE musicUrl=%@",musicUrl];

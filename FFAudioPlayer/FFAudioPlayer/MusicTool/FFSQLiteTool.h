@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  根据点击的tableview查询对应的已下载音频数据
  */
-+ (NSDictionary *)queryDownloadMusicWithPrimaryKey:(NSString *)key;
++ (NSDictionary *)queryDownloadMusicWithTitleName:(NSString *)titleName;
 
 + (BOOL)deleteDownloadMusicWithMusicUrl:(NSString *)musicUrl;
 
