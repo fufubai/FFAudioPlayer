@@ -38,6 +38,7 @@ static dispatch_once_t _onceToken;
         //初始化player对象
         if (self.songItem) {
             self.avPlayer = [[AVPlayer alloc]initWithPlayerItem:self.songItem];
+            [self.avPlayer setAutomaticallyWaitsToMinimizeStalling:NO];//不用下载完成后再播放
             [self.avPlayer play];
         }
         

@@ -161,9 +161,11 @@
         self.downloadButton.hidden = YES;
     }else {
         NSDictionary *dict = self.musicArr[self.currentIndex];
-        BOOL isDownloaded = [FFSQLiteTool queryDownloadMusicWithTitleName:dict[@"title"]];
-        if (isDownloaded) {
+        NSDictionary *downloadDict = [FFSQLiteTool queryDownloadMusicWithTitleName:dict[@"title"]];
+        if ([downloadDict[@"isExist"] boolValue]) {
             self.downloadButton.enabled = NO;
+        }else {
+            self.downloadButton.enabled = YES;
         }
     }
     
