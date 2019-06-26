@@ -273,50 +273,50 @@
 
 - (void)startPlay {
     self.playButton.selected = YES;
-    NSDictionary *musicDic = self.musicArr[self.currentIndex];
-    NSLog(@"===dictionary:%@",musicDic);
-    self.musicDic = musicDic;
+    NSDictionary *musicDic = [NSDictionary dictionary];
     NSString *picUrl;
+    FFWeakSelf;
     if (self.isLocal) {
-        NSDictionary *musicDic = [NSDictionary dictionary];
         musicDic = [FFSQLiteTool queryDownloadMusicWithPrimaryKey:[NSString stringWithFormat: @"%ld",self.currentIndex+1]];
         picUrl = [musicDic objectForKey:@"pictureUrl"];
+        NSString *stringPath = musicDic[@"playUrl64"];
+        
+        _revolveImage.image = [UIImage imageWithData:[musicDic objectForKey:@"picData"] ];
+        NSData *musicData = [musicDic objectForKey:@"musicData"];
+        [FFPlayer musicTool].musicUrl = [musicDic objectForKey:@"musicUrl"];
+        [FFPlayer musicTool].isLocal = YES;
+        if ([[FFPlayer musicTool].musicUrl isEqualToString:stringPath]) {
+            [[FFPlayer musicTool] play];
+        }else {
+            [[FFPlayer musicTool] playLocalMusic:musicData];
+        }
+        [self addAnimationOfPic];
     }else {
+        musicDic = self.musicArr[self.currentIndex];
         picUrl = musicDic[@"coverMiddle"];
+        NSString *stringPath = musicDic[@"playUrl64"];
+        [_revolveImage sd_setImageWithURL:[NSURL URLWithString:picUrl] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+            weakSelf.saveImage = image;
+            [self addAnimationOfPic];
+        }];
+        if ([[FFPlayer musicTool].musicUrl isEqualToString:stringPath]) {
+            [[FFPlayer musicTool] play];
+        }else {
+            [[FFPlayer musicTool] playWithMusicUrl:stringPath];
+        }
+        [FFPlayer musicTool].isLocal = NO;
     }
     
+    self.musicDic = musicDic;
     _musicTitleLabel.text = musicDic[@"titleName"];
-    NSString *stringPath = musicDic[@"playUrl64"];
-    if ([[FFPlayer musicTool].musicUrl isEqualToString:stringPath]) {
-        [[FFPlayer musicTool] play];
-    }else {
-        if (self.isLocal) {
-            NSMutableDictionary *dic = self.musicArr[self.currentIndex];
-            _revolveImage.image = [UIImage imageWithData:[dic objectForKey:@"picData"] ];
-            NSData *musicData = [dic objectForKey:@"musicData"];
-            [[FFPlayer musicTool] playLocalMusic:musicData];
-            [FFPlayer musicTool].isLocal = YES;
-            [self createLayer];
-            [self revolveImageBeginRotate];
-        }else {
-            __weak typeof(self) weakSelf = self;
-            [_revolveImage sd_setImageWithURL:[NSURL URLWithString:picUrl] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-                weakSelf.saveImage = image;
-                [self createLayer];
-                [self revolveImageBeginRotate];
-            }];
-            if ([[FFPlayer musicTool].musicUrl isEqualToString:stringPath]) {
-                [[FFPlayer musicTool] play];
-            }else {
-                [[FFPlayer musicTool] playWithMusicUrl:stringPath];
-            }
-            [FFPlayer musicTool].isLocal = NO;
-            
-        }
-        
-    }
     self.musicIsPlaying(YES);
     self.timer = [self addMusicTimer];
+}
+
+//图片旋转动画
+- (void)addAnimationOfPic {
+    [self createLayer];
+    [self revolveImageBeginRotate];
 }
 
 //拖动slider

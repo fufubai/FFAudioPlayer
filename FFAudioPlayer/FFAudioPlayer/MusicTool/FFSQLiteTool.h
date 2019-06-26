@@ -26,6 +26,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 + (NSDictionary *)queryDownloadMusicWithPrimaryKey:(NSString *)key;
 
++ (BOOL)deleteDownloadMusicWithMusicUrl:(NSString *)musicUrl;
+
 /**
  *  查询所有已下载的音频数据
  */

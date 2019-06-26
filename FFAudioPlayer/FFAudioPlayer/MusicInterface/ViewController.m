@@ -11,6 +11,7 @@
 #import <AFNetworking.h>
 #import "FFNetWorkTool.h"
 #import <Masonry.h>
+#import <SDWebImage.h>
 #import "FFPlayViewViewController.h"
 #import "FFDownloadListViewController.h"
 
@@ -124,6 +125,7 @@
     self.playerViewVC = playerViewVC;
     playerViewVC.musicArr = self.dataArray;
     playerViewVC.currentIndex = index;
+    playerViewVC.isLocal = NO;
     __weak typeof(self) weakSelf = self;
     [playerViewVC setMusicIsPlaying:^(BOOL isPlaying) {
         if (isPlaying) {

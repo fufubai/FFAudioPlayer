@@ -20,3 +20,4 @@
 
 //沙盒音频数组name
 #define AUDIOARRAY audioNameArrayXML.xml
+#define FFWeakSelf __weak typeof(self) weakSelf = self;

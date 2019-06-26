@@ -56,6 +56,22 @@ static FMDatabase *_db;
     [_db close];
     return nil;
 }
+//根据下标删除某条音频
++ (BOOL)deleteDownloadMusicWithMusicUrl:(NSString *)musicUrl {
+    if ([_db open]) {
+        int count = [_db executeUpdateWithFormat:@"DELETE FROM t_download_music WHERE musicUrl=%@",musicUrl];
+        [_db close];
+        if (count > 0) {
+            NSLog(@"删除成功");
+            return YES;
+        }else{
+            NSLog(@"删除失败");
+            return NO;
+        }
+    }
+    return NO;
+}
+//查询所有音频数据
 + (NSArray *)queryAllDownloadMusic {
     NSMutableArray *mArray = [NSMutableArray array];
     if ([_db open]) {

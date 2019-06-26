@@ -49,6 +49,7 @@
 - (void)getDownloadUrl {
     self.dataArray = [FFSQLiteTool queryAllDownloadMusic].mutableCopy;
     [self.tableView reloadData];
+    [self setExtraCellLineHidden:self.tableView];
 }
 
 #pragma mark - tableView 代理方法和数据源方法
@@ -72,6 +73,29 @@
 }
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     [self presentToPlayVC:indexPath.row];
+    
+}
+
+
+- ( UISwipeActionsConfiguration *)tableView:(UITableView *)tableView trailingSwipeActionsConfigurationForRowAtIndexPath:(NSIndexPath *)indexPath {
+    __block NSMutableDictionary *dic = self.dataArray[indexPath.row];
+    //删除
+    UIContextualAction *deleteRowAction = [UIContextualAction contextualActionWithStyle:UIContextualActionStyleDestructive title:@"delete" handler:^(UIContextualAction * _Nonnull action, __kindof UIView * _Nonnull sourceView, void (^ _Nonnull completionHandler)(BOOL)) {
+        BOOL isDelete = [FFSQLiteTool deleteDownloadMusicWithMusicUrl:dic[@"musicUrl"]];
+        completionHandler (YES);
+        if (isDelete) {
+            [self getDownloadUrl];
+        }
+    }];
+    UISwipeActionsConfiguration *config = [UISwipeActionsConfiguration configurationWithActions:@[deleteRowAction]];
+    return config;
+}
+
+- (void)setExtraCellLineHidden: (UITableView *)tableView
+{
+    UIView *view = [UIView new];
+    view.backgroundColor = [UIColor clearColor];
+    [tableView setTableFooterView:view];
     
 }
 
