@@ -23,16 +23,16 @@ static FMDatabase *_db;
         return;
     }
     //4. 创建表
-    BOOL result1 = [_db executeUpdate:@"CREATE TABLE IF NOT EXISTS t_download_music(id integer PRIMARY KEY, titleName text NOT NULL, musicUrl text NOT NULL,musicData blob NOT NULL, pictureUrl text);"];
+    BOOL result1 = [_db executeUpdate:@"CREATE TABLE IF NOT EXISTS t_download_music(id integer PRIMARY KEY, titleName text NOT NULL, picData blob,musicData blob NOT NULL, musicUrl text);"];
     if (result1) {
         NSLog(@"创建音乐表成功");
     }
 }
 
 //添加音频下载文件
-+ (void)addDownloadMusicWithTitleName:(NSString *)titleName musicUrl:(NSString *)urlString pictureUrl:(NSString *)picString data:(NSData *)data{
++ (void)addDownloadMusicWithTitleName:(NSString *)titleName musicUrl:(NSString *)urlString pictureData:(NSData *)picData musicData:(NSData *)musicData{
     if ([_db open]) {
-        int count = [_db executeUpdateWithFormat:@"INSERT INTO t_download_music(titleName,musicUrl,musicData,pictureUrl) VALUES(%@,%@,%@,%@)",titleName,urlString,data,picString];
+        int count = [_db executeUpdateWithFormat:@"INSERT INTO t_download_music(titleName,musicUrl,musicData,picData) VALUES(%@,%@,%@,%@)",titleName,urlString,musicData,picData];
 //        int count = [_db executeUpdateWithFormat:@"INSERT INTO t_download_music(titleName,musicUrl,pictureUrl) VALUES(%@,%@,%@)",titleName,urlString,picString];
         
         if (count > 0) {
@@ -49,7 +49,7 @@ static FMDatabase *_db;
     if ([_db open]) {
         FMResultSet *set = [_db executeQueryWithFormat:@"SELECT * FROM t_download_music WHERE id=%@", key];
         if ([set next]) {
-            NSDictionary *resultDic = @{@"titleName":[set objectForColumn:@"titleName"],@"musicData":[set objectForColumn:@"musicData"],@"pictureUrl":[set objectForColumn:@"pictureUrl"]};
+            NSDictionary *resultDic = @{@"titleName":[set objectForColumn:@"titleName"],@"musicData":[set objectForColumn:@"musicData"],@"picData":[set objectForColumn:@"picData"],@"musicUrl":[set objectForColumn:@"musicUrl"]};
             return resultDic;
         }
     }
@@ -61,7 +61,7 @@ static FMDatabase *_db;
     if ([_db open]) {
         FMResultSet *set = [_db executeQueryWithFormat:@"SELECT * FROM t_download_music"];
         while ([set next]) {
-            NSDictionary *resultDic = @{@"titleName":[set objectForColumn:@"titleName"],@"musicData":[set objectForColumn:@"musicData"],@"pictureUrl":[set objectForColumn:@"pictureUrl"]};
+            NSDictionary *resultDic = @{@"titleName":[set objectForColumn:@"titleName"],@"musicData":[set objectForColumn:@"musicData"],@"picData":[set objectForColumn:@"picData"],@"musicUrl":[set objectForColumn:@"musicUrl"]};
             [mArray addObject:resultDic];
         }
     }

@@ -47,7 +47,6 @@ static dispatch_once_t _onceToken;
 
 // 播放本地音频
 - (void)playLocalMusic:(NSData *)musicData {
-//    NSURL *urlFile = [NSURL fileURLWithPath:filePath];
     self.audioPlayer = [[AVAudioPlayer alloc] initWithData:musicData error:nil];
     if (self.audioPlayer)
     {
@@ -66,29 +65,40 @@ static dispatch_once_t _onceToken;
 
 - (void)pause {
     self.isPlaying = NO;
-    [self.avPlayer pause];
+    if (self.isLocal) {
+        [self.audioPlayer pause];
+    }else {
+        [self.avPlayer pause];
+    }
+    
 }
 
 - (void)play {
     self.isPlaying = YES;
-    [self.avPlayer play];
-}
-
-- (void)playLast:(NSString *)musicUrl; {
-    [self playWithMusicUrl:musicUrl];
-}
-- (void)playNext:(NSString *)musicUrl {
-    [self playWithMusicUrl:musicUrl];
+    if (self.isLocal) {
+        [self.audioPlayer play];
+    }else {
+        [self.avPlayer play];
+    }
 }
 
 - (CGFloat)totalTime
 {
-    return CMTimeGetSeconds(self.avPlayer.currentItem.asset.duration);
+    if (self.isLocal) {
+        return self.audioPlayer.duration;
+    }else {
+        return CMTimeGetSeconds(self.avPlayer.currentItem.asset.duration);
+    }
 }
 
 - (CGFloat)currentTime
 {
-    return CMTimeGetSeconds(self.avPlayer.currentItem.currentTime);
+    if (self.isLocal) {
+        return self.audioPlayer.currentTime;
+    }else {
+        return CMTimeGetSeconds(self.avPlayer.currentItem.currentTime);
+    }
+    
 }
 
 - (CGFloat)progress

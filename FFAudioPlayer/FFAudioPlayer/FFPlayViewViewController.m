@@ -39,6 +39,8 @@
 
 @property (nonatomic,strong)NSDictionary *musicDic;//音频数据
 @property (nonatomic,strong)NSMutableArray *musicMArr;//保存本地音频数据
+
+@property (nonatomic,strong)UIImage *saveImage;
 @end
 
 @implementation FFPlayViewViewController
@@ -155,6 +157,10 @@
         [_nextButton setImage:[UIImage imageNamed:@"startBtn_right"] forState:UIControlStateNormal];
     }
     
+    if (self.isLocal) {
+        self.downloadButton.hidden = YES;
+    }
+    
     [self viewsLocation];
 }
 
@@ -245,6 +251,9 @@
 
 - (void)lastButtonAction:(UIButton *)btn {
     self.currentIndex--;
+    if (self.currentIndex >= self.musicArr.count) {
+        self.currentIndex = 0;
+    }
     [self startPlay];
     if (self.layer.speed == 0) {
         [self animationContinue];
@@ -253,6 +262,9 @@
 
 - (void)nextButtonAction:(UIButton *)btn {
     self.currentIndex++;
+    if (self.currentIndex >= self.musicArr.count) {
+        self.currentIndex = 0;
+    }
     [self startPlay];
     if (self.layer.speed == 0) {
         [self animationContinue];
@@ -272,10 +284,7 @@
     }else {
         picUrl = musicDic[@"coverMiddle"];
     }
-    [_revolveImage sd_setImageWithURL:[NSURL URLWithString:picUrl] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
-        [self createLayer];
-        [self revolveImageBeginRotate];
-    }];
+    
     _musicTitleLabel.text = musicDic[@"titleName"];
     NSString *stringPath = musicDic[@"playUrl64"];
     if ([[FFPlayer musicTool].musicUrl isEqualToString:stringPath]) {
@@ -283,14 +292,25 @@
     }else {
         if (self.isLocal) {
             NSMutableDictionary *dic = self.musicArr[self.currentIndex];
+            _revolveImage.image = [UIImage imageWithData:[dic objectForKey:@"picData"] ];
             NSData *musicData = [dic objectForKey:@"musicData"];
             [[FFPlayer musicTool] playLocalMusic:musicData];
+            [FFPlayer musicTool].isLocal = YES;
+            [self createLayer];
+            [self revolveImageBeginRotate];
         }else {
+            __weak typeof(self) weakSelf = self;
+            [_revolveImage sd_setImageWithURL:[NSURL URLWithString:picUrl] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
+                weakSelf.saveImage = image;
+                [self createLayer];
+                [self revolveImageBeginRotate];
+            }];
             if ([[FFPlayer musicTool].musicUrl isEqualToString:stringPath]) {
                 [[FFPlayer musicTool] play];
             }else {
                 [[FFPlayer musicTool] playWithMusicUrl:stringPath];
             }
+            [FFPlayer musicTool].isLocal = NO;
             
         }
         
@@ -325,7 +345,8 @@
     [FFNetWorkTool DownloadAudioWithUrlString:downloadUrl params:nil success:^(id  _Nonnull response) {
         weakSelf.downloadButton.enabled = NO;
         NSData *musicData =[NSData dataWithContentsOfFile:response];
-        [FFSQLiteTool addDownloadMusicWithTitleName:self.musicDic[@"title"] musicUrl:self.musicDic[@"playUrl64"] pictureUrl:self.musicDic[@"coverMiddle"] data:musicData];
+        NSData *imageData = UIImageJPEGRepresentation(self.saveImage,1.0f);//第二个参数为压缩倍数
+        [FFSQLiteTool addDownloadMusicWithTitleName:self.musicDic[@"title"] musicUrl:self.musicDic[@"playUrl64"] pictureData:imageData musicData:musicData];
     }];
 }
 

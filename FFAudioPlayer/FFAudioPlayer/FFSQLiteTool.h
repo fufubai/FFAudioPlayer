@@ -19,7 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  *  添加下载的音频数据
  */
-+ (void)addDownloadMusicWithTitleName:(NSString *)titleName musicUrl:(NSString *)urlString pictureUrl:(NSString *)picString data:(NSData *)data;
++ (void)addDownloadMusicWithTitleName:(NSString *)titleName musicUrl:(NSString *)urlString pictureData:(NSData *)picData musicData:(NSData *)musicData;
 
 /**
  *  根据点击的tableview查询对应的已下载音频数据

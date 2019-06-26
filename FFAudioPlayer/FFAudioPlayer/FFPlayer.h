@@ -17,9 +17,11 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, strong) AVAudioPlayer  *audioPlayer;//播放网络音频
 @property (nonatomic,strong)AVPlayerItem * songItem;
 @property (nonatomic,assign)BOOL isPlaying;//播放状态
+@property (nonatomic,assign)BOOL isLocal;//播放本地音频
 @property (nonatomic,copy)NSString *musicUrl;
 
-- (void)playWithMusicName:(NSString *)musicName withType:(BOOL)isLocal;
+
+
 - (void)playWithMusicUrl:(NSString *)musicUrl;
 - (void)playLocalMusic:(NSData *)musicData;
 
@@ -27,8 +29,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)pause;
 - (void)play;
-- (void)playLast:(NSString *)musicUrl;
-- (void)playNext:(NSString *)musicUrl;
 
 - (CGFloat)totalTime;
 - (CGFloat)currentTime;
