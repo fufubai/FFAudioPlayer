@@ -11,8 +11,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 typedef void(^successData)(id response);
+typedef void(^progressData)(NSProgress *progress);
 
 @interface FFNetWorkTool : NSObject
+/**
+ * 正在下载的url
+ */
+@property (nonatomic,strong)NSMutableArray *downloadingUrlArray;
 /**
  * 创建单例
  */
@@ -31,7 +36,7 @@ typedef void(^successData)(id response);
 /**
  *  创建下载请求
  */
-+ (void)DownloadAudioWithUrlString:(NSString *)urlString params:(id _Nullable)params success:(successData)success;
++ (NSURLSessionDownloadTask *)DownloadAudioWithUrlString:(NSString *)urlString params:(id _Nullable)params progress:(progressData)progress success:(successData)success;
 
 @end
 

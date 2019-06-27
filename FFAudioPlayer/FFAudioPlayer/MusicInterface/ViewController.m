@@ -23,6 +23,7 @@
 @property (nonatomic,strong)UIImageView *liveImage;//动画图片
 @end
 
+static NSString *MUSICURL = @"http://mobile.ximalaya.com/mobile/v1/album?albumId=3021864&device=iPhone&pageSize=20&source=5&statEvent=pageview%2Falbum%403021864&statModule=听小说_幻想&statPage=categorytag%40听小说_幻想&statPosition=105";
 @implementation ViewController
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -46,11 +47,11 @@
 }
 
 - (void)loadData {
-    NSString *url = @"http://mobile.ximalaya.com/mobile/v1/album?albumId=3021864&device=iPhone&pageSize=20&source=5&statEvent=pageview%2Falbum%403021864&statModule=听小说_幻想&statPage=categorytag%40听小说_幻想&statPosition=105";
-    [FFNetWorkTool doGetWithURLString:[url stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]] params:nil success:^(id  _Nonnull response) {
+    [FFNetWorkTool doGetWithURLString:[MUSICURL stringByAddingPercentEncodingWithAllowedCharacters:[NSCharacterSet URLQueryAllowedCharacterSet]] params:nil success:^(id  _Nonnull response) {
         for (NSDictionary *dic in response[@"data"][@"tracks"][@"list"]) {
             [self.dataArray addObject:dic];
         }
+        [self prepareFooterView];
         [self.tableView reloadData];
     }];
     
@@ -62,14 +63,47 @@
     self.tableView.delegate = self;
     self.tableView.dataSource = self;
 }
+- (void)prepareFooterView {
+    UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 60)];
+    UIButton *downloadBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [downloadBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [downloadBtn setTitle:@"批量下载" forState:UIControlStateNormal];
+    downloadBtn.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    downloadBtn.layer.borderColor = [UIColor blackColor].CGColor;
+    downloadBtn.layer.borderWidth = 1;
+    downloadBtn.layer.cornerRadius = 10;
+    downloadBtn.clipsToBounds = YES;
+    [tableFooterView addSubview:downloadBtn];
+    [downloadBtn mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.centerX.equalTo(tableFooterView.mas_centerX);
+        make.centerY.equalTo(tableFooterView.mas_centerY);
+        make.width.mas_equalTo(120);
+        make.height.mas_equalTo(30);
+    }];
+    self.tableView.tableFooterView = tableFooterView;
+}
 
-//右上角进入下载界面的按钮
+#pragma mark - 右上角进入下载界面的按钮
 - (void)prepareDownloadBtnlist {
-    UIButton *downloadListBtn = [[UIButton alloc] init];
-    [downloadListBtn setImage:[UIImage imageNamed:@"download"] forState:UIControlStateNormal];
+    UIButton *downloadListBtn = [UIButton buttonWithType:UIButtonTypeCustom];;
+    downloadListBtn.bounds = CGRectMake(0, 0, 80, 30);
+    [downloadListBtn setImage:[UIImage imageNamed:@"startBtn_right"] forState:UIControlStateNormal];
+    [downloadListBtn setTitle:@"已下载" forState:UIControlStateNormal];
+    downloadListBtn.titleLabel.font = [UIFont boldSystemFontOfSize:16];
+    [downloadListBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    [downloadListBtn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
     self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:downloadListBtn];
     [downloadListBtn addTarget:self action:@selector(downloadListBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+    [self setButtonWordAndImageWithButton:downloadListBtn];
 }
+
+//设置左文字右图片
+- (void)setButtonWordAndImageWithButton:(UIButton *)downloadListBtn {
+    [downloadListBtn setTitleEdgeInsets:UIEdgeInsetsMake(0, -downloadListBtn.imageView.bounds.size.width, 0, downloadListBtn.imageView.bounds.size.width)];
+    [downloadListBtn setImageEdgeInsets:UIEdgeInsetsMake(0, downloadListBtn.titleLabel.bounds.size.width, 0, -downloadListBtn.titleLabel.bounds.size.width)];
+}
+
+//下载列表按钮点击方法
 - (void)downloadListBtnClick:(UIButton *)btn {
     FFDownloadListViewController *downloadListVC = [[FFDownloadListViewController alloc] init];
     [self.navigationController pushViewController:downloadListVC animated:YES];
@@ -98,8 +132,11 @@
     [self presentToPlayVC:indexPath.row];
 }
 
+
+
 #pragma mark - 添加声浪动画
 - (void)addVoiceAnimation {
+    self.liveImage.hidden = NO;
     self.navigationItem.titleView = nil;
     self.liveImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"audio_live_image0"]];
     NSArray *gifArray = [NSArray arrayWithObjects:[UIImage imageNamed:@"audio_live_image0"],[UIImage imageNamed:@"audio_live_image1"],[UIImage imageNamed:@"audio_live_image2"],[UIImage imageNamed:@"audio_live_image3"],[UIImage imageNamed:@"audio_live_image4"], nil];
@@ -113,7 +150,12 @@
     
     UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(gotoPlayVC:)];
     [self.liveImage addGestureRecognizer:tap];
-    self.liveImage.userInteractionEnabled = YES;
+    if (self.liveImage.animating) {
+        self.liveImage.userInteractionEnabled = YES;
+    }else {
+        self.liveImage.userInteractionEnabled = NO;
+    }
+    
 }
 
 - (void)gotoPlayVC:(UITapGestureRecognizer *)tap {
@@ -131,7 +173,8 @@
         if (isPlaying) {
             [self addVoiceAnimation];
         }else {
-            [weakSelf.liveImage stopAnimating];
+//            [weakSelf.liveImage stopAnimating];
+            weakSelf.liveImage.hidden = YES;
         }
     }];
     [self presentViewController:playerViewVC animated:YES completion:nil];

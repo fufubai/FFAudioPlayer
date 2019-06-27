@@ -28,6 +28,35 @@
     self.title = @"download list";
     [self prepareTableView];
     [self getDownloadUrl];
+    [self prepareDownloadBtnlist];
+}
+
+#pragma mark - 右上角批量删除按钮
+- (void)prepareDownloadBtnlist {
+    UIButton *deleteAllBtn = [UIButton buttonWithType:UIButtonTypeCustom];;
+    deleteAllBtn.bounds = CGRectMake(0, 0, 80, 30);
+    [deleteAllBtn setTitle:@"全部删除" forState:UIControlStateNormal];
+    deleteAllBtn.titleLabel.font = [UIFont boldSystemFontOfSize:16];
+    [deleteAllBtn setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
+    [deleteAllBtn setTitleColor:[UIColor blackColor] forState:UIControlStateHighlighted];
+    self.navigationItem.rightBarButtonItem = [[UIBarButtonItem alloc] initWithCustomView:deleteAllBtn];
+    [deleteAllBtn addTarget:self action:@selector(deleteAllBtnClick:) forControlEvents:UIControlEventTouchUpInside];
+}
+
+- (void)deleteAllBtnClick:(UIButton *)btn {
+    UIAlertController *alertController;
+    [self getDownloadUrl];
+    alertController = [UIAlertController alertControllerWithTitle:@"确认删除" message:nil preferredStyle:UIAlertControllerStyleAlert];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
+        if ([FFSQLiteTool deleteAllDownloadMusic]){
+            [self getDownloadUrl];
+        }
+    }]];
+    [alertController addAction:[UIAlertAction actionWithTitle:@"取消" style:UIAlertActionStyleCancel handler:^(UIAlertAction * _Nonnull action) {
+        
+    }]];
+    [self presentViewController:alertController animated:YES completion:nil];
+        
 }
 
 //准备tableview

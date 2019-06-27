@@ -21,3 +21,9 @@
 //沙盒音频数组name
 #define AUDIOARRAY audioNameArrayXML.xml
 #define FFWeakSelf __weak typeof(self) weakSelf = self;
+
+#ifdef DEBUG
+#define FFLog(...) printf("第%d行: %s\n\n",__LINE__, [[NSString stringWithFormat:__VA_ARGS__] UTF8String]);
+#else
+#define FFLog(...)
+#endif

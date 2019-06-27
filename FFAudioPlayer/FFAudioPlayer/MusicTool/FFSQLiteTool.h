@@ -28,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 + (BOOL)deleteDownloadMusicWithMusicUrl:(NSString *)musicUrl;
 
++ (BOOL)deleteAllDownloadMusic;
+
 /**
  *  查询所有已下载的音频数据
  */

@@ -8,6 +8,7 @@
 
 #import "FFSQLiteTool.h"
 #import "FMDB.h"
+#import "PrefixHeader.pch"
 
 @implementation FFSQLiteTool
 static FMDatabase *_db;
@@ -15,7 +16,7 @@ static FMDatabase *_db;
 + (void)createTable{
     //1. 获取路径
     NSString *filePath = [[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject] stringByAppendingPathComponent:@"musicDownload.db"];
-    NSLog(@"filePath : %@", filePath);
+    FFLog(@"filePath : %@", filePath);
     //2. 创建数据库
     _db = [FMDatabase databaseWithPath:filePath];
     //3. 判断是否打开成功
@@ -25,7 +26,7 @@ static FMDatabase *_db;
     //4. 创建表
     BOOL result1 = [_db executeUpdate:@"CREATE TABLE IF NOT EXISTS t_download_music(id integer PRIMARY KEY, titleName text NOT NULL, picData blob,musicData blob NOT NULL, musicUrl text);"];
     if (result1) {
-        NSLog(@"创建音乐表成功");
+        FFLog(@"创建音乐表成功");
     }
 }
 
@@ -33,12 +34,10 @@ static FMDatabase *_db;
 + (void)addDownloadMusicWithTitleName:(NSString *)titleName musicUrl:(NSString *)musicUrl pictureData:(NSData *)picData musicData:(NSData *)musicData{
     if ([_db open]) {
         int count = [_db executeUpdateWithFormat:@"INSERT INTO t_download_music(titleName,musicUrl,musicData,picData) VALUES(%@,%@,%@,%@)",titleName,musicUrl,musicData,picData];
-//        int count = [_db executeUpdateWithFormat:@"INSERT INTO t_download_music(titleName,musicUrl,pictureUrl) VALUES(%@,%@,%@)",titleName,urlString,picString];
-        
         if (count > 0) {
-            NSLog(@"更新成功");
+            FFLog(@"更新成功");
         }else{
-            NSLog(@"更新失败");
+            FFLog(@"更新失败");
         }
     }
     [_db close];
@@ -64,15 +63,32 @@ static FMDatabase *_db;
         int count = [_db executeUpdateWithFormat:@"DELETE FROM t_download_music WHERE musicUrl=%@",musicUrl];
         [_db close];
         if (count > 0) {
-            NSLog(@"删除成功");
+            FFLog(@"删除成功");
             return YES;
         }else{
-            NSLog(@"删除失败");
+            FFLog(@"删除失败");
             return NO;
         }
     }
     return NO;
 }
+
+//删除所有音频数据
++ (BOOL)deleteAllDownloadMusic {
+    if ([_db open]) {
+        int count = [_db executeUpdateWithFormat:@"DELETE FROM t_download_music"];
+        [_db close];
+        if (count > 0) {
+            FFLog(@"删除成功");
+            return YES;
+        }else{
+            FFLog(@"删除失败");
+            return NO;
+        }
+    }
+    return NO;
+}
+
 //查询所有音频数据
 + (NSArray *)queryAllDownloadMusic {
     NSMutableArray *mArray = [NSMutableArray array];

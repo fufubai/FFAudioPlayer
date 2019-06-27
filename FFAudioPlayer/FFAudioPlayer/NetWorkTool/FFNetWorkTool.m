@@ -8,6 +8,7 @@
 
 #import "FFNetWorkTool.h"
 #import <AFNetworking.h>
+#import "PrefixHeader.pch"
 
 @implementation FFNetWorkTool
 
@@ -16,6 +17,7 @@
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         sharedSingleton = [[self alloc] init];
+        sharedSingleton.downloadingUrlArray = [NSMutableArray array];
     });
     return sharedSingleton;
 }
@@ -33,10 +35,10 @@
     url = [NSMutableString stringWithString:urlString];
     dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0),^{
         [manager POST:url parameters:params progress:nil success:^(NSURLSessionDataTask * _Nonnull task, id  _Nullable responseObject) {
-            NSLog(@"请求链接=%@,参数=%@,返回值=%@",url,params,responseObject);
+            FFLog(@"请求链接=%@,参数=%@,返回值=%@",url,params,responseObject);
             success(responseObject);
         } failure:^(NSURLSessionDataTask * _Nullable task, NSError * _Nonnull error) {
-            NSLog(@"请求链接=%@,参数=%@,错误码=%@",url,params,error);
+            FFLog(@"请求链接=%@,参数=%@,错误码=%@",url,params,error);
         }];
     });
 }
@@ -57,21 +59,24 @@
     }];
 }
 
-+ (void)DownloadAudioWithUrlString:(NSString *)urlString params:(id)params success:(successData)success {
++ (NSURLSessionDownloadTask *)DownloadAudioWithUrlString:(NSString *)urlString params:(id)params  progress:(progressData)progress success:(successData)success {
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
     AFURLSessionManager *manager = [[AFURLSessionManager alloc] initWithSessionConfiguration:configuration];
     
     NSURL *URL = [NSURL URLWithString:urlString];
     NSURLRequest *request = [NSURLRequest requestWithURL:URL];
     
-    NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request progress:nil destination:^NSURL *(NSURL *targetPath, NSURLResponse *response) {
+    NSURLSessionDownloadTask *downloadTask = [manager downloadTaskWithRequest:request progress:^(NSProgress * _Nonnull downloadProgress) {
+        progress(downloadProgress);
+    } destination:^NSURL * _Nonnull(NSURL * _Nonnull targetPath, NSURLResponse * _Nonnull response) {
         NSURL *documentsDirectoryURL = [[NSFileManager defaultManager] URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:NO error:nil];
         return [documentsDirectoryURL URLByAppendingPathComponent:[response suggestedFilename]];
-    } completionHandler:^(NSURLResponse *response, NSURL *filePath, NSError *error) {
-        NSLog(@"File downloaded to: %@", filePath);
+    } completionHandler:^(NSURLResponse * _Nonnull response, NSURL * _Nullable filePath, NSError * _Nullable error) {
         success(filePath);
     }];
-    [downloadTask resume];
+    
+    [downloadTask resume];//执行
+    return downloadTask;
 }
 
 
