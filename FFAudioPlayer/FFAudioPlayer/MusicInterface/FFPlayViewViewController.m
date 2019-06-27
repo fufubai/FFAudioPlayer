@@ -32,6 +32,8 @@
 @property (nonatomic, strong) UIButton *nextButton;
 @property (nonatomic, strong) UIButton *backButton;
 @property (nonatomic, strong) UIButton *downloadButton;//下载按钮
+@property (nonatomic, strong) UIButton *stopDownloadButton;//暂停下载
+@property (nonatomic,strong)NSURLSessionDownloadTask *downloadTask;
 
 @property (nonatomic,strong)NSTimer *timer;
 @property (nonatomic,strong)CALayer *layer;//图片旋转功能
@@ -61,7 +63,7 @@
     if ([noti.object isEqualToString:self.musicDic[@"playUrl64"]]) {
         self.downloadButton.selected = NO;
         self.downloadButton.enabled = NO;
-        FFLog(@"done");
+        self.stopDownloadButton.hidden = YES;
     }
     
 }
@@ -90,6 +92,7 @@
         if ([downloadDict[@"isExist"] boolValue]) {
             self.downloadButton.selected = NO;
             self.downloadButton.enabled = NO;
+            self.stopDownloadButton.hidden = YES;
         }else {
             self.downloadButton.selected = NO;
             self.downloadButton.enabled = YES;
@@ -123,6 +126,17 @@
         [self.downloadButton setTitleColor:[UIColor blackColor] forState:UIControlStateSelected];
         self.downloadButton.titleLabel.font = [UIFont systemFontOfSize:16];
     }
+    if (!self.stopDownloadButton) {
+        self.stopDownloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        [self.view addSubview:self.stopDownloadButton];
+        [self.stopDownloadButton addTarget:self action:@selector(stopDownloadButtonAction:) forControlEvents:UIControlEventTouchUpInside];
+        [self.stopDownloadButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [self.stopDownloadButton setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
+        self.stopDownloadButton.titleLabel.font = [UIFont systemFontOfSize:16];
+        [self.stopDownloadButton setTitle:@"暂停下载" forState:UIControlStateNormal];
+        [self.stopDownloadButton setTitle:@"继续" forState:UIControlStateSelected];
+    }
+    
     if (!_revolveImage) {
         _revolveImage = [[UIImageView alloc] init];
         [_revolveImage setContentScaleFactor:[[UIScreen mainScreen] scale]];
@@ -208,6 +222,12 @@
         make.right.mas_equalTo(-20);
         make.top.mas_equalTo(20);
         make.width.mas_equalTo(120);
+        make.height.mas_equalTo(40);
+    }];
+    [self.stopDownloadButton mas_makeConstraints:^(MASConstraintMaker *make) {
+        make.right.mas_equalTo(-20);
+        make.top.mas_equalTo(self.downloadButton.mas_bottom).mas_offset(10);
+        make.width.mas_equalTo(40);
         make.height.mas_equalTo(40);
     }];
     [self.revolveImage mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -400,7 +420,7 @@
     NSDictionary *downloadDict = [FFSQLiteTool queryDownloadMusicWithTitleName:self.musicDic[@"title"]];
     if (![downloadDict[@"isExist"] boolValue]) {
         [[FFNetWorkTool shareNetWorkTool].downloadingUrlArray addObject:downloadUrl];
-        [FFNetWorkTool DownloadAudioWithUrlString:downloadUrl params:nil progress:^(NSProgress * _Nonnull progress) {
+        NSURLSessionDownloadTask *downloadTask = [FFNetWorkTool DownloadAudioWithUrlString:downloadUrl params:nil progress:^(NSProgress * _Nonnull progress) {
             FFLog(@"progress_____%f__%@__%lld__%lld___downloadUrl=%@",progress.fractionCompleted,progress.localizedDescription,progress.completedUnitCount,progress.totalUnitCount,downloadUrl);
             if ([self.musicDic[@"playUrl64"] isEqualToString:downloadUrl]) {
                 [self performSelectorOnMainThread:@selector(setDownloadBtnTitle:) withObject:progress waitUntilDone:YES];
@@ -409,6 +429,7 @@
             NSDictionary *dict = @{@"response":response,@"downloadUrl":downloadUrl};
             [self performSelectorOnMainThread:@selector(saveMusicData:) withObject:dict waitUntilDone:nil];
         }];
+        self.downloadTask = downloadTask;
     }else {
         FFLog(@"已下载");
     }
@@ -433,6 +454,16 @@
     //必须发送通知到viewdidload里面刷新按钮的状态
     [[NSNotificationCenter defaultCenter] postNotificationName:@"MusicDownloadedNotification" object:dict[@"downloadUrl"]];
     [[FFNetWorkTool shareNetWorkTool].downloadingUrlArray removeObject:dict[@"downloadUrl"]];
+}
+
+//暂停
+- (void)stopDownloadButtonAction:(UIButton *)btn {
+    if (btn.selected) {
+        [self.downloadTask resume];
+    }else {
+        [self.downloadTask suspend];
+    }
+    btn.selected = !btn.selected;
 }
 
 #pragma mark - 添加定时器显示时间和进度条
