@@ -57,7 +57,9 @@
         if (self.downloadArr.count > 0) {
             btn.selected = NO;
             btn.enabled = NO;
+            
             [self downloadSelectedMusic];
+            
         }else {
             UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"请选择要下载的音频" message:nil preferredStyle:UIAlertControllerStyleAlert];
             [alertController addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
@@ -165,7 +167,6 @@
 
 #pragma mark - 批量下载方法
 - (void)downloadSelectedMusic {
-    self.tableView.allowsSelection = NO;
     for (int i = 0;i<self.downloadArr.count ;i++) {
         __block NSDictionary *dict = self.downloadArr[i];
         __block NSString *downloadUrl = dict[MUSIC_WEB];
@@ -201,6 +202,7 @@
 
 //下载完毕存储音频
 - (void)saveMusicData:(NSDictionary *)dict {
+    self.tableView.allowsSelection = NO;
     __block NSData *musicData =[NSData dataWithContentsOfFile:dict[@"response"]];
     
     SDWebImageManager *manager = [SDWebImageManager sharedManager];

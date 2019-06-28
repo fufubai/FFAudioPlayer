@@ -102,7 +102,7 @@ static FMDatabase *_db;
 + (NSArray *)queryAllDownloadMusic {
     NSMutableArray *mArray = [NSMutableArray array];
     if ([_db open]) {
-        FMResultSet *set = [_db executeQueryWithFormat:@"SELECT * FROM t_download_music"];
+        FMResultSet *set = [_db executeQueryWithFormat:@"SELECT * FROM t_download_music ORDER BY titleName"];
         while ([set next]) {
             NSDictionary *resultDic = @{LOCAL_TITLENAME:[set objectForColumn:LOCAL_TITLENAME],@"musicData":[set objectForColumn:@"musicData"],@"picData":[set objectForColumn:@"picData"],@"musicUrl":[set objectForColumn:@"musicUrl"]};
             [mArray addObject:resultDic];

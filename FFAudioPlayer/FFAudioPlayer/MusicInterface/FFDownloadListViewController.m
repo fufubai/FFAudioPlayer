@@ -45,6 +45,9 @@
 
 - (void)deleteAllBtnClick:(UIButton *)btn {
     UIAlertController *alertController;
+    if (self.dataArray.count <= 0) {
+        return;
+    }
     [self getDownloadUrl];
     alertController = [UIAlertController alertControllerWithTitle:@"确认删除" message:nil preferredStyle:UIAlertControllerStyleAlert];
     [alertController addAction:[UIAlertAction actionWithTitle:@"确定" style:UIAlertActionStyleDefault handler:^(UIAlertAction * _Nonnull action) {
