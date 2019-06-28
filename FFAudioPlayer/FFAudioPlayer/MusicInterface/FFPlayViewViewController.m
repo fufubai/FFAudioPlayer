@@ -12,6 +12,7 @@
 #import "FFPlayer.h"
 #import "FFNetWorkTool.h"
 #import "PrefixHeader.pch"
+#import <MediaPlayer/MediaPlayer.h>//后台播放
 
 @interface FFPlayViewViewController ()
 @property (nonatomic, assign) CGFloat playbackTime;
@@ -57,6 +58,12 @@
     [self startPlay];
     [self createMutableAudioArray];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishDownloadMusic:) name:@"MusicDownloadedNotification" object:nil];
+    
+    //设置后台播放  锁屏功能展示图片
+    //1.让当前控制器作为第一响应者
+    [self becomeFirstResponder];
+    //2.开启接收远程 事件
+    [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     
 }
 - (void)finishDownloadMusic:(NSNotification *)noti {
@@ -351,7 +358,7 @@
         musicDic = self.musicArr[self.currentIndex];
         //查询是否已下载
         NSDictionary *dict = [FFSQLiteTool queryDownloadMusicWithTitleName:musicDic[@"title"]];
-        if ([dict[@"isExist"] boolValue]) {
+        if ([dict[@"isExist"] boolValue]) {//1已下载
             _revolveImage.image = [UIImage imageWithData:[dict objectForKey:@"picData"] ];
             NSData *musicData = [dict objectForKey:@"musicData"];
             [FFPlayer musicTool].isLocal = YES;
@@ -363,7 +370,7 @@
             }
             [FFPlayer musicTool].musicUrl = [dict objectForKey:@"musicUrl"];
             [self addAnimationOfPic];
-        }else {
+        }else {//2未下载
             picUrl = musicDic[@"coverMiddle"];
             NSString *stringPath = musicDic[@"playUrl64"];
             [_revolveImage sd_setImageWithURL:[NSURL URLWithString:picUrl] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
@@ -490,6 +497,8 @@
         [self nextButtonAction:self.nextButton];
     }
     
+    [self backgroundPlayingFunc];//后台播放
+    
 }
 
 //转换时间的显示格式
@@ -590,5 +599,104 @@
     self.layer.beginTime = timePause;
 }
 
+
+#pragma mark - 后台播放
+//更新锁屏界面的信息
+- (void)backgroundPlayingFunc
+{
+    //正在播放的信息中心
+    NSMutableDictionary *dict = [NSMutableDictionary dictionary];
+    //当前时间  总时间  图片  歌词 专辑名称 歌手名称
+    NSDictionary *musicDic = [NSDictionary dictionary];
+    musicDic = self.musicArr[self.currentIndex];
+    
+    
+    
+    dict[MPMediaItemPropertyPlaybackDuration] = @([[FFPlayer musicTool]totalTime]);
+    dict[MPNowPlayingInfoPropertyElapsedPlaybackTime] = @([[FFPlayer musicTool] currentTime]);
+    //    dict[MPMediaItemPropertyArtist] = music.singer;//歌手
+    //    dict[MPMediaItemPropertyAlbumTitle]  = music.zhuanji;//专辑
+    
+    dict[MPMediaItemPropertyTitle] = musicDic[@"title"];
+    
+    
+    //1.绘制正方形的图片
+    UIImage *rectImage = self.revolveImage.image;
+    
+    CGRect rect  = CGRectMake(0, 0, 200, 200);
+    //设备上下文
+    UIGraphicsBeginImageContext(rect.size);
+    [rectImage drawInRect:rect];
+    
+    //2.显示锁屏歌词 (绘制歌词语句到专辑图片上)
+    //拿到歌词
+    
+    //    CZLrcModel *lrc = self.allLrcs[_currentIndexForLrc];
+    
+    //    [lrc.text drawInRect:CGRectMake(0, rect.size.height - 64, rect.size.width, 44) withFont:[UIFont systemFontOfSize:22] lineBreakMode:NSLineBreakByWordWrapping alignment:NSTextAlignmentCenter];
+    //绘制上去
+    
+    //设置图片
+    UIImage *result = UIGraphicsGetImageFromCurrentImageContext();
+    //关闭设备上下文
+    UIGraphicsEndImageContext();
+    
+    
+    
+//    dict[MPMediaItemPropertyArtwork] = [[MPMediaItemArtwork alloc]initWithImage:result];
+    dict[MPMediaItemPropertyArtwork] = [[MPMediaItemArtwork alloc] initWithBoundsSize:rect.size requestHandler:^UIImage * _Nonnull(CGSize size) {
+        return result;
+    }];
+    
+    //播放中心
+    [MPNowPlayingInfoCenter defaultCenter].nowPlayingInfo = dict;
+}
+//3.接收到事件之后做处理
+- (void)remoteControlReceivedWithEvent:(UIEvent *)event
+{
+    /*
+     UIEventSubtypeRemoteControlPlay                 = 100,播放
+     UIEventSubtypeRemoteControlPause                = 101,暂停
+     UIEventSubtypeRemoteControlStop                 = 102,停止
+     UIEventSubtypeRemoteControlTogglePlayPause      = 103,耳机
+     UIEventSubtypeRemoteControlNextTrack            = 104,下一曲
+     UIEventSubtypeRemoteControlPreviousTrack        = 105, 上一曲
+     UIEventSubtypeRemoteControlBeginSeekingBackward = 106, 开始快退
+     UIEventSubtypeRemoteControlEndSeekingBackward   = 107,结束快退
+     UIEventSubtypeRemoteControlBeginSeekingForward  = 108, 开始快进
+     UIEventSubtypeRemoteControlEndSeekingForward    = 109,结束快进
+     */
+    switch (event.subtype) {
+        case UIEventSubtypeRemoteControlPlay:
+            [self startPlay];
+            break;
+        case UIEventSubtypeRemoteControlPause:
+            [self playAction:self.playButton];
+            break;
+        case UIEventSubtypeRemoteControlNextTrack:
+            [self nextButtonAction:self.nextButton];
+            break;
+        case UIEventSubtypeRemoteControlPreviousTrack:
+            [self lastButtonAction:self.lastButton];
+            break;
+        default:
+            break;
+    }
+    
+}
+//让当前控制器 能够成为第一响应者(使得走第三步的方法)
+- (BOOL)canBecomeFirstResponder
+{
+    return YES;
+}
+
+//判断当前是否为后台播放
+-(BOOL) runningInBackground
+{
+    UIApplicationState state = [UIApplication sharedApplication].applicationState;
+    BOOL result = (state == UIApplicationStateBackground);
+    
+    return result;
+}
 
 @end

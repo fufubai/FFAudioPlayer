@@ -27,6 +27,7 @@ static dispatch_once_t _onceToken;
 
 // 播放网络音频
 - (void)playWithMusicUrl:(NSString *)musicUrl {
+    [self stop];
     if (musicUrl == nil) {
         return;
     }
@@ -48,6 +49,7 @@ static dispatch_once_t _onceToken;
 
 // 播放本地音频
 - (void)playLocalMusic:(NSData *)musicData {
+    [self stop];
     self.audioPlayer = [[AVAudioPlayer alloc] initWithData:musicData error:nil];
     if (self.audioPlayer)
     {
@@ -61,6 +63,12 @@ static dispatch_once_t _onceToken;
             [self.audioPlayer play];
         }
     }
+}
+
+- (void)stop {
+    self.isPlaying = NO;
+    [self.audioPlayer stop];
+    [self.avPlayer pause];
 }
 
 

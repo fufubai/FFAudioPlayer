@@ -208,8 +208,6 @@
         
     } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
         [FFSQLiteTool addDownloadMusicWithTitleName:dict[@"titleName"] musicUrl:dict[@"downloadUrl"] pictureData:data musicData:musicData];
-        //必须发送通知到viewdidload里面刷新按钮的状态
-//        [[NSNotificationCenter defaultCenter] postNotificationName:@"MusicDownloadedListNotification" object:dict[@"downloadUrl"]];
         [[FFNetWorkTool shareNetWorkTool].downloadingUrlArray removeObject:dict[@"downloadUrl"]];
         [self performSelectorOnMainThread:@selector(downloadedChangeUI:) withObject:dict[@"titleName"] waitUntilDone:NO];
     }];
