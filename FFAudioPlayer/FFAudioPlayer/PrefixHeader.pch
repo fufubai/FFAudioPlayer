@@ -14,5 +14,6 @@
 
 #import "Const.h"
 #import "FFSQLiteTool.h"
+#import "FFPlayer.h"
 
 #endif /* PrefixHeader_pch */

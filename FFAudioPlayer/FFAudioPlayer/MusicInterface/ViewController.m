@@ -34,6 +34,12 @@ static NSString *MUSICURL = @"http://mobile.ximalaya.com/mobile/v1/album?albumId
     self.title = @"FFAudioPlayer";
 }
 
+- (void)viewWillAppear:(BOOL)animated {
+    if ([FFPlayer musicTool].isPlaying) {
+        [self addVoiceAnimation];
+    }
+}
+
 - (NSMutableArray *)dataArray {
     if (!_dataArray) {
         _dataArray = [NSMutableArray array];

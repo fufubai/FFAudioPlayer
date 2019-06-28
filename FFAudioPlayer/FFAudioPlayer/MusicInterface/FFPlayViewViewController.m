@@ -18,6 +18,8 @@
 @property (nonatomic, assign) CGFloat playbackTime;
 @property (nonatomic, strong) NSTimer *playerTimer;
 @property (nonatomic, strong) UIImageView *revolveImage;
+@property (nonatomic, strong) UIImageView *backRevolveImage;//背景图片(毛玻璃效果)
+@property (nonatomic,strong)UIVisualEffectView *effectView;//毛玻璃挡板
 @property (nonatomic, strong) UILabel *nowTimeLabel;
 @property (nonatomic, strong) UILabel *totalTimeLabel;
 @property (nonatomic, strong) UILabel *musicTitleLabel;
@@ -44,6 +46,8 @@
 @property (nonatomic,strong)NSMutableArray *musicMArr;//保存本地音频数据
 
 @property (nonatomic,strong)UIImage *saveImage;
+
+
 @end
 
 @implementation FFPlayViewViewController
@@ -90,6 +94,10 @@
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [self refreshUIWithData];
+}
+
+- (void)refreshUIWithData {
     if (self.isLocal) {
         self.downloadButton.hidden = YES;
         self.stopDownloadButton.hidden = YES;
@@ -104,6 +112,9 @@
         }else {
             self.downloadButton.selected = NO;
             self.downloadButton.enabled = YES;
+            self.stopDownloadButton.hidden = NO;
+            self.downloadButton.hidden = NO;
+            [self.downloadButton setImage:[UIImage imageNamed:@"download"] forState:UIControlStateNormal];
         }
         //2、查询是否在下载队列中
         if ([[FFNetWorkTool shareNetWorkTool].downloadingUrlArray containsObject:dict[MUSIC_WEB]]) {
@@ -116,6 +127,14 @@
 
 #pragma mark - 创建视图
 - (void)createView{
+    if (!_backRevolveImage) {
+        _backRevolveImage = [[UIImageView alloc] init];
+        [_backRevolveImage setContentScaleFactor:[[UIScreen mainScreen] scale]];
+        _backRevolveImage.contentMode =  UIViewContentModeScaleAspectFill;
+        _backRevolveImage.frame = self.view.bounds;
+        [self.view addSubview:_backRevolveImage];
+    }
+    
     if (!_backButton) {
         _backButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [ self.view addSubview:_backButton];
@@ -138,7 +157,7 @@
         self.stopDownloadButton = [UIButton buttonWithType:UIButtonTypeCustom];
         [self.view addSubview:self.stopDownloadButton];
         [self.stopDownloadButton addTarget:self action:@selector(stopDownloadButtonAction:) forControlEvents:UIControlEventTouchUpInside];
-        [self.stopDownloadButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+        [self.stopDownloadButton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
         [self.stopDownloadButton setTitleColor:[UIColor redColor] forState:UIControlStateSelected];
         self.stopDownloadButton.titleLabel.font = [UIFont systemFontOfSize:16];
         [self.stopDownloadButton setTitle:@"暂停下载" forState:UIControlStateNormal];
@@ -166,7 +185,7 @@
         _playerProgress = [[UIProgressView alloc] init];
         //更改进度条高度
         _playerProgress.transform = CGAffineTransformMakeScale(1.0f,1.0f);
-        _playerProgress.tintColor = [UIColor blackColor];
+        _playerProgress.tintColor = [UIColor grayColor];
         [self.view addSubview:_playerProgress];
     }
     if (!_sliderProgress) {
@@ -235,7 +254,7 @@
     [self.stopDownloadButton mas_makeConstraints:^(MASConstraintMaker *make) {
         make.right.mas_equalTo(-20);
         make.top.mas_equalTo(self.downloadButton.mas_bottom).mas_offset(10);
-        make.width.mas_equalTo(40);
+        make.width.mas_equalTo(80);
         make.height.mas_equalTo(40);
     }];
     [self.revolveImage mas_makeConstraints:^(MASConstraintMaker *make) {
@@ -318,6 +337,7 @@
     if (self.currentIndex >= self.musicArr.count) {
         self.currentIndex = 0;
     }
+    [self refreshUIWithData];
     [self startPlay];
     if (self.layer.speed == 0) {
         [self animationContinue];
@@ -329,6 +349,7 @@
     if (self.currentIndex >= self.musicArr.count) {
         self.currentIndex = 0;
     }
+    [self refreshUIWithData];
     [self startPlay];
     if (self.layer.speed == 0) {
         [self animationContinue];
@@ -345,7 +366,9 @@
         musicDic = self.musicArr[self.currentIndex];
         picUrl = [musicDic objectForKey:@"musicUrl"];
         
-        _revolveImage.image = [UIImage imageWithData:[musicDic objectForKey:@"picData"] ];
+        _revolveImage.image = [UIImage imageWithData:[musicDic objectForKey:@"picData"]];
+        _backRevolveImage.image = [UIImage imageWithData:[musicDic objectForKey:@"picData"]];
+        [self processImageWithImageView:self.backRevolveImage];
         NSData *musicData = [musicDic objectForKey:@"musicData"];
         [FFPlayer musicTool].isLocal = YES;
         _musicTitleLabel.text = musicDic[LOCAL_TITLENAME];
@@ -362,6 +385,8 @@
         NSDictionary *dict = [FFSQLiteTool queryDownloadMusicWithTitleName:musicDic[MUSICTITLE_WEB]];
         if ([dict[@"isExist"] boolValue]) {//1已下载
             _revolveImage.image = [UIImage imageWithData:[dict objectForKey:@"picData"] ];
+            _backRevolveImage.image = [UIImage imageWithData:[musicDic objectForKey:@"picData"]];
+            [self processImageWithImageView:self.backRevolveImage];
             NSData *musicData = [dict objectForKey:@"musicData"];
             [FFPlayer musicTool].isLocal = YES;
             _musicTitleLabel.text = dict[LOCAL_TITLENAME];
@@ -377,6 +402,8 @@
             NSString *stringPath = musicDic[MUSIC_WEB];
             [_revolveImage sd_setImageWithURL:[NSURL URLWithString:picUrl] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                 weakSelf.saveImage = image;
+                weakSelf.backRevolveImage.image = image;
+                [self processImageWithImageView:weakSelf.backRevolveImage];
                 [self addAnimationOfPic];
             }];
             _musicTitleLabel.text = musicDic[MUSICTITLE_WEB];
@@ -705,4 +732,20 @@
     return result;
 }
 
+
+#pragma mark - 毛玻璃效果
+- (void)processImageWithImageView:(UIImageView *)bacImgView{
+    [self.effectView removeFromSuperview];
+    /*
+     毛玻璃的样式(枚举)
+     UIBlurEffectStyleExtraLight,
+     UIBlurEffectStyleLight,
+     UIBlurEffectStyleDark
+     */
+    UIBlurEffect *effect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    UIVisualEffectView *effectView = [[UIVisualEffectView alloc] initWithEffect:effect];
+    self.effectView = effectView;
+    effectView.frame = CGRectMake(0, -20, bacImgView.frame.size.width, bacImgView.frame.size.height+20);
+    [bacImgView addSubview:effectView];
+}
 @end
