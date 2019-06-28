@@ -67,7 +67,7 @@
     
 }
 - (void)finishDownloadMusic:(NSNotification *)noti {
-    if ([noti.object isEqualToString:self.musicDic[@"playUrl64"]]) {
+    if ([noti.object isEqualToString:self.musicDic[MUSIC_WEB]]) {
         self.downloadButton.selected = NO;
         self.downloadButton.enabled = NO;
         self.stopDownloadButton.hidden = YES;
@@ -92,10 +92,11 @@
 - (void)viewWillAppear:(BOOL)animated {
     if (self.isLocal) {
         self.downloadButton.hidden = YES;
+        self.stopDownloadButton.hidden = YES;
     }else {
         NSDictionary *dict = self.musicArr[self.currentIndex];
         //1、查询是否已经下载
-        NSDictionary *downloadDict = [FFSQLiteTool queryDownloadMusicWithTitleName:dict[@"title"]];
+        NSDictionary *downloadDict = [FFSQLiteTool queryDownloadMusicWithTitleName:dict[MUSICTITLE_WEB]];
         if ([downloadDict[@"isExist"] boolValue]) {
             self.downloadButton.selected = NO;
             self.downloadButton.enabled = NO;
@@ -105,7 +106,7 @@
             self.downloadButton.enabled = YES;
         }
         //2、查询是否在下载队列中
-        if ([[FFNetWorkTool shareNetWorkTool].downloadingUrlArray containsObject:dict[@"playUrl64"]]) {
+        if ([[FFNetWorkTool shareNetWorkTool].downloadingUrlArray containsObject:dict[MUSIC_WEB]]) {
             self.downloadButton.selected = YES;
         }else {
             self.downloadButton.selected = NO;
@@ -302,6 +303,7 @@
 - (void)playAction:(UIButton *)btn {
     if (btn.selected) {
         [[FFPlayer musicTool] pause];
+        [self removeMusicTimer];
         self.musicIsPlaying(NO);
         [self animationPause];
     }else {
@@ -341,12 +343,12 @@
     
     if (self.isLocal) {
         musicDic = self.musicArr[self.currentIndex];
-        picUrl = [musicDic objectForKey:@"pictureUrl"];
+        picUrl = [musicDic objectForKey:@"musicUrl"];
         
         _revolveImage.image = [UIImage imageWithData:[musicDic objectForKey:@"picData"] ];
         NSData *musicData = [musicDic objectForKey:@"musicData"];
         [FFPlayer musicTool].isLocal = YES;
-        _musicTitleLabel.text = musicDic[@"titleName"];
+        _musicTitleLabel.text = musicDic[LOCAL_TITLENAME];
         if ([[FFPlayer musicTool].musicUrl isEqualToString:[musicDic objectForKey:@"musicUrl"]]) {
             [[FFPlayer musicTool] play];
         }else {
@@ -357,12 +359,12 @@
     }else {
         musicDic = self.musicArr[self.currentIndex];
         //查询是否已下载
-        NSDictionary *dict = [FFSQLiteTool queryDownloadMusicWithTitleName:musicDic[@"title"]];
+        NSDictionary *dict = [FFSQLiteTool queryDownloadMusicWithTitleName:musicDic[MUSICTITLE_WEB]];
         if ([dict[@"isExist"] boolValue]) {//1已下载
             _revolveImage.image = [UIImage imageWithData:[dict objectForKey:@"picData"] ];
             NSData *musicData = [dict objectForKey:@"musicData"];
             [FFPlayer musicTool].isLocal = YES;
-            _musicTitleLabel.text = dict[@"titleName"];
+            _musicTitleLabel.text = dict[LOCAL_TITLENAME];
             if ([[FFPlayer musicTool].musicUrl isEqualToString:[dict objectForKey:@"musicUrl"]]) {
                 [[FFPlayer musicTool] play];
             }else {
@@ -371,13 +373,13 @@
             [FFPlayer musicTool].musicUrl = [dict objectForKey:@"musicUrl"];
             [self addAnimationOfPic];
         }else {//2未下载
-            picUrl = musicDic[@"coverMiddle"];
-            NSString *stringPath = musicDic[@"playUrl64"];
+            picUrl = musicDic[COVERMIDDLE_WEB];
+            NSString *stringPath = musicDic[MUSIC_WEB];
             [_revolveImage sd_setImageWithURL:[NSURL URLWithString:picUrl] completed:^(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL) {
                 weakSelf.saveImage = image;
                 [self addAnimationOfPic];
             }];
-            _musicTitleLabel.text = musicDic[@"title"];
+            _musicTitleLabel.text = musicDic[MUSICTITLE_WEB];
             if ([[FFPlayer musicTool].musicUrl isEqualToString:stringPath]) {
                 [[FFPlayer musicTool] play];
             }else {
@@ -421,15 +423,15 @@
 #pragma mark - 下载功能（储存到沙盒documents）
 - (void)downloadButtonAction:(UIButton *)btn {
     btn.selected = YES;
-    __block NSString *downloadUrl = self.musicDic[@"playUrl64"];
+    __block NSString *downloadUrl = self.musicDic[MUSIC_WEB];
     [btn setImage:nil forState:UIControlStateNormal];
     //查询是否已经下载
-    NSDictionary *downloadDict = [FFSQLiteTool queryDownloadMusicWithTitleName:self.musicDic[@"title"]];
+    NSDictionary *downloadDict = [FFSQLiteTool queryDownloadMusicWithTitleName:self.musicDic[MUSICTITLE_WEB]];
     if (![downloadDict[@"isExist"] boolValue]) {
         [[FFNetWorkTool shareNetWorkTool].downloadingUrlArray addObject:downloadUrl];
         NSURLSessionDownloadTask *downloadTask = [FFNetWorkTool DownloadAudioWithUrlString:downloadUrl params:nil progress:^(NSProgress * _Nonnull progress) {
             FFLog(@"progress_____%f__%@__%lld__%lld___downloadUrl=%@",progress.fractionCompleted,progress.localizedDescription,progress.completedUnitCount,progress.totalUnitCount,downloadUrl);
-            if ([self.musicDic[@"playUrl64"] isEqualToString:downloadUrl]) {
+            if ([self.musicDic[MUSIC_WEB] isEqualToString:downloadUrl]) {
                 [self performSelectorOnMainThread:@selector(setDownloadBtnTitle:) withObject:progress waitUntilDone:YES];
             }
         } success:^(id  _Nonnull response) {
@@ -459,7 +461,7 @@
     self.downloadButton.enabled = NO;
     NSData *musicData =[NSData dataWithContentsOfFile:dict[@"response"]];
     NSData *imageData = UIImageJPEGRepresentation(self.saveImage,1.0f);//第二个参数为压缩倍数
-    [FFSQLiteTool addDownloadMusicWithTitleName:self.musicDic[@"title"] musicUrl:self.musicDic[@"playUrl64"] pictureData:imageData musicData:musicData];
+    [FFSQLiteTool addDownloadMusicWithTitleName:self.musicDic[MUSICTITLE_WEB] musicUrl:self.musicDic[MUSIC_WEB] pictureData:imageData musicData:musicData];
     //必须发送通知到viewdidload里面刷新按钮的状态
     [[NSNotificationCenter defaultCenter] postNotificationName:@"MusicDownloadedNotification" object:dict[@"downloadUrl"]];
     [[FFNetWorkTool shareNetWorkTool].downloadingUrlArray removeObject:dict[@"downloadUrl"]];
@@ -478,6 +480,11 @@
 #pragma mark - 添加定时器显示时间和进度条
 - (NSTimer *)addMusicTimer {
     return [NSTimer scheduledTimerWithTimeInterval:0.1f target:self selector:@selector(timerRun) userInfo:nil repeats:YES];
+}
+
+- (void)removeMusicTimer {
+    [self.timer invalidate];
+    self.timer = nil;
 }
 
 - (void)timerRun {
@@ -520,8 +527,7 @@
 }
 
 - (void)dealloc {
-    [self.timer invalidate];
-    self.timer = nil;
+    [self removeMusicTimer];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
@@ -617,7 +623,7 @@
     //    dict[MPMediaItemPropertyArtist] = music.singer;//歌手
     //    dict[MPMediaItemPropertyAlbumTitle]  = music.zhuanji;//专辑
     
-    dict[MPMediaItemPropertyTitle] = musicDic[@"title"];
+    dict[MPMediaItemPropertyTitle] = musicDic[MUSICTITLE_WEB];
     
     
     //1.绘制正方形的图片

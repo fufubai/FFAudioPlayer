@@ -27,3 +27,12 @@
 #else
 #define FFLog(...)
 #endif
+
+#define LOCAL_TITLENAME @"titleName"
+#define PICTUREURL_WEB @"pictureUrl"
+#define COVERMIDDLE_WEB @"coverMiddle"
+#define MUSIC_WEB @"playUrl64"
+#define MUSICTITLE_WEB @"title"
+
+
+

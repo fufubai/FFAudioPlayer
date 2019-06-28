@@ -131,7 +131,7 @@ static NSString *MUSICURL = @"http://mobile.ximalaya.com/mobile/v1/album?albumId
     }
     cell.selectionStyle = UITableViewCellSelectionStyleNone;
     NSDictionary *dic = self.dataArray[indexPath.row];
-    cell.textLabel.text = dic[@"title"];
+    cell.textLabel.text = dic[MUSICTITLE_WEB];
     
     return cell;
 }

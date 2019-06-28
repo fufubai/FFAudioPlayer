@@ -96,7 +96,7 @@
     }
     
     NSMutableDictionary *dic = self.dataArray[indexPath.row];
-    cell.textLabel.text = dic[@"titleName"];
+    cell.textLabel.text = dic[LOCAL_TITLENAME];
     
     return cell;
 }

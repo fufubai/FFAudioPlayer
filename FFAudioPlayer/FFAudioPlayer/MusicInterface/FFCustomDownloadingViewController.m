@@ -87,7 +87,7 @@
     {
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i inSection:0];
         NSDictionary *dict = self.musicArr[i];
-        if ([[FFSQLiteTool queryDownloadMusicWithTitleName:dict[@"title"]][@"isExist"] boolValue]) {
+        if ([[FFSQLiteTool queryDownloadMusicWithTitleName:dict[MUSICTITLE_WEB]][@"isExist"] boolValue]) {
             UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
             cell.backgroundColor = [UIColor redColor];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -115,7 +115,7 @@
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     NSDictionary *dict = self.musicArr[indexPath.row];
-    if ([[FFSQLiteTool queryDownloadMusicWithTitleName:dict[@"title"]][@"isExist"] boolValue]) {
+    if ([[FFSQLiteTool queryDownloadMusicWithTitleName:dict[MUSICTITLE_WEB]][@"isExist"] boolValue]) {
         return NO;
     }else {
         return YES;
@@ -135,8 +135,8 @@
         cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:reuse];
     }
     NSDictionary *dic = self.musicArr[indexPath.row];
-    cell.textLabel.text = dic[@"title"];
-    if ([[FFSQLiteTool queryDownloadMusicWithTitleName:dic[@"title"]][@"isExist"] boolValue]) {
+    cell.textLabel.text = dic[MUSICTITLE_WEB];
+    if ([[FFSQLiteTool queryDownloadMusicWithTitleName:dic[MUSICTITLE_WEB]][@"isExist"] boolValue]) {
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",@"100%"];
         cell.backgroundColor = [UIColor redColor];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
@@ -152,7 +152,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSDictionary *dic = self.musicArr[indexPath.row];
-    if (![[FFSQLiteTool queryDownloadMusicWithTitleName:dic[@"title"]][@"isExist"] boolValue]) {
+    if (![[FFSQLiteTool queryDownloadMusicWithTitleName:dic[MUSICTITLE_WEB]][@"isExist"] boolValue]) {
         [self.downloadArr addObject:self.musicArr[indexPath.row]];
         FFLog(@"self.downloadArr.count%ld",self.downloadArr.count);
     }
@@ -168,14 +168,14 @@
     self.tableView.allowsSelection = NO;
     for (int i = 0;i<self.downloadArr.count ;i++) {
         __block NSDictionary *dict = self.downloadArr[i];
-        __block NSString *downloadUrl = dict[@"playUrl64"];
+        __block NSString *downloadUrl = dict[MUSIC_WEB];
         [[FFNetWorkTool shareNetWorkTool].downloadingUrlArray addObject:downloadUrl];
         [FFNetWorkTool DownloadAudioWithUrlString:downloadUrl params:nil progress:^(NSProgress * _Nonnull progress) {
             FFLog(@"progress_____%f__%@__%lld__%lld___downloadUrl=%@",progress.fractionCompleted,progress.localizedDescription,progress.completedUnitCount,progress.totalUnitCount,downloadUrl);
             NSDictionary *dict1 = @{@"progress":progress,@"downloadUrl":downloadUrl};
             [self performSelectorOnMainThread:@selector(setDownloadBtnTitle:) withObject:dict1 waitUntilDone:YES];
         } success:^(id  _Nonnull response) {
-            NSDictionary *dict2 = @{@"response":response,@"downloadUrl":downloadUrl,@"titleName":dict[@"title"],@"coverImageUrl":dict[@"coverMiddle"]};
+            NSDictionary *dict2 = @{@"response":response,@"downloadUrl":downloadUrl,LOCAL_TITLENAME:dict[MUSICTITLE_WEB],@"coverImageUrl":dict[COVERMIDDLE_WEB]};
             [self performSelectorOnMainThread:@selector(saveMusicData:) withObject:dict2 waitUntilDone:nil];
         }];
     }
@@ -185,7 +185,7 @@
 - (void)setDownloadBtnTitle:(NSDictionary *)dict {
     for (int i = 0; i < self.musicArr.count; i ++ ) {
         NSDictionary *dictAll = self.musicArr[i];
-        if ([dictAll[@"playUrl64"] isEqualToString:dict[@"downloadUrl"]]) {
+        if ([dictAll[MUSIC_WEB] isEqualToString:dict[@"downloadUrl"]]) {
             NSProgress *progress = dict[@"progress"];
             NSRange range = [progress.localizedDescription rangeOfString:@"%"];
             NSString *rate = [progress.localizedDescription substringToIndex:range.location + 1];
@@ -201,15 +201,15 @@
 
 //下载完毕存储音频
 - (void)saveMusicData:(NSDictionary *)dict {
-    NSData *musicData =[NSData dataWithContentsOfFile:dict[@"response"]];
+    __block NSData *musicData =[NSData dataWithContentsOfFile:dict[@"response"]];
     
     SDWebImageManager *manager = [SDWebImageManager sharedManager];
-    [manager loadImageWithURL:dict[@"coverMiddle"] options:SDWebImageContinueInBackground progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
+    [manager loadImageWithURL:dict[@"coverImageUrl"] options:SDWebImageHighPriority progress:^(NSInteger receivedSize, NSInteger expectedSize, NSURL * _Nullable targetURL) {
         
     } completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-        [FFSQLiteTool addDownloadMusicWithTitleName:dict[@"titleName"] musicUrl:dict[@"downloadUrl"] pictureData:data musicData:musicData];
+        [FFSQLiteTool addDownloadMusicWithTitleName:dict[LOCAL_TITLENAME] musicUrl:dict[@"downloadUrl"] pictureData:data musicData:musicData];
         [[FFNetWorkTool shareNetWorkTool].downloadingUrlArray removeObject:dict[@"downloadUrl"]];
-        [self performSelectorOnMainThread:@selector(downloadedChangeUI:) withObject:dict[@"titleName"] waitUntilDone:NO];
+        [self performSelectorOnMainThread:@selector(downloadedChangeUI:) withObject:dict[LOCAL_TITLENAME] waitUntilDone:NO];
     }];
     
     
@@ -219,13 +219,14 @@
 - (void)downloadedChangeUI:(NSString *)titleName {
     for (int i = 0; i<self.downloadArr.count; i++) {
         NSDictionary *dict = self.downloadArr[i];
-        if ([dict[@"title"] isEqualToString:titleName]) {
+        if ([dict[MUSICTITLE_WEB] isEqualToString:titleName]) {
             [self.downloadArr removeObjectAtIndex:i];
         }
     }
     if (self.downloadArr.count == 0) {
         self.downloadListBtn.enabled = YES;
         self.downloadListBtn.selected = NO;
+        sleep(1);//防止查询和写入不匹配
         [self.tableView reloadData];
     }
     
