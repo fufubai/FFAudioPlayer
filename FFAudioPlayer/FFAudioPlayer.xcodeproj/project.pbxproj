@@ -18,6 +18,7 @@
 		ED707BE522C20DBD00CCEDB3 /* FFSQLiteTool.m in Sources */ = {isa = PBXBuildFile; fileRef = ED707BE422C20DBD00CCEDB3 /* FFSQLiteTool.m */; };
 		ED707BE922C20EA000CCEDB3 /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = ED707BE822C20EA000CCEDB3 /* libsqlite3.tbd */; };
 		ED77880A22BB78B5008A0E6F /* FFDownloadListViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED77880922BB78B5008A0E6F /* FFDownloadListViewController.m */; };
+		ED8DE6ED22C4BFF000588FEA /* FFCustomDownloadingViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED8DE6EC22C4BFF000588FEA /* FFCustomDownloadingViewController.m */; };
 		ED8F7CCE22B8CCC100C9544B /* FFPlayViewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = ED8F7CCD22B8CCC100C9544B /* FFPlayViewViewController.m */; };
 		ED8F7CD222B8E53900C9544B /* FFPlayer.m in Sources */ = {isa = PBXBuildFile; fileRef = ED8F7CD122B8E53900C9544B /* FFPlayer.m */; };
 /* End PBXBuildFile section */
@@ -46,6 +47,8 @@
 		ED707BE822C20EA000CCEDB3 /* libsqlite3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libsqlite3.tbd; path = usr/lib/libsqlite3.tbd; sourceTree = SDKROOT; };
 		ED77880822BB78B5008A0E6F /* FFDownloadListViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFDownloadListViewController.h; sourceTree = "<group>"; };
 		ED77880922BB78B5008A0E6F /* FFDownloadListViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFDownloadListViewController.m; sourceTree = "<group>"; };
+		ED8DE6EB22C4BFF000588FEA /* FFCustomDownloadingViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFCustomDownloadingViewController.h; sourceTree = "<group>"; };
+		ED8DE6EC22C4BFF000588FEA /* FFCustomDownloadingViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFCustomDownloadingViewController.m; sourceTree = "<group>"; };
 		ED8F7CCC22B8CCC100C9544B /* FFPlayViewViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFPlayViewViewController.h; sourceTree = "<group>"; };
 		ED8F7CCD22B8CCC100C9544B /* FFPlayViewViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = FFPlayViewViewController.m; sourceTree = "<group>"; };
 		ED8F7CD022B8E53900C9544B /* FFPlayer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = FFPlayer.h; sourceTree = "<group>"; };
@@ -130,6 +133,8 @@
 				ED8F7CCD22B8CCC100C9544B /* FFPlayViewViewController.m */,
 				ED77880822BB78B5008A0E6F /* FFDownloadListViewController.h */,
 				ED77880922BB78B5008A0E6F /* FFDownloadListViewController.m */,
+				ED8DE6EB22C4BFF000588FEA /* FFCustomDownloadingViewController.h */,
+				ED8DE6EC22C4BFF000588FEA /* FFCustomDownloadingViewController.m */,
 			);
 			path = MusicInterface;
 			sourceTree = "<group>";
@@ -283,6 +288,7 @@
 				ED26682622B776B000243735 /* main.m in Sources */,
 				ED8F7CD222B8E53900C9544B /* FFPlayer.m in Sources */,
 				ED26683322B7868F00243735 /* FFNetWorkTool.m in Sources */,
+				ED8DE6ED22C4BFF000588FEA /* FFCustomDownloadingViewController.m in Sources */,
 				ED707BE522C20DBD00CCEDB3 /* FFSQLiteTool.m in Sources */,
 				ED8F7CCE22B8CCC100C9544B /* FFPlayViewViewController.m in Sources */,
 				ED26681822B776AE00243735 /* AppDelegate.m in Sources */,

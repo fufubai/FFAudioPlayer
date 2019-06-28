@@ -430,6 +430,8 @@
             [self performSelectorOnMainThread:@selector(saveMusicData:) withObject:dict waitUntilDone:nil];
         }];
         self.downloadTask = downloadTask;
+
+        
     }else {
         FFLog(@"已下载");
     }

@@ -14,6 +14,7 @@
 #import <SDWebImage.h>
 #import "FFPlayViewViewController.h"
 #import "FFDownloadListViewController.h"
+#import "FFCustomDownloadingViewController.h"
 
 @interface ViewController ()<UITableViewDelegate,UITableViewDataSource>
 @property (nonatomic,strong)UITableView *tableView;
@@ -66,9 +67,10 @@ static NSString *MUSICURL = @"http://mobile.ximalaya.com/mobile/v1/album?albumId
 - (void)prepareFooterView {
     UIView *tableFooterView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, self.view.bounds.size.width, 60)];
     UIButton *downloadBtn = [UIButton buttonWithType:UIButtonTypeCustom];
+    [downloadBtn addTarget:self action:@selector(downloadBtnClick:) forControlEvents:UIControlEventTouchUpInside];
     [downloadBtn setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [downloadBtn setTitle:@"批量下载" forState:UIControlStateNormal];
-    downloadBtn.titleLabel.font = [UIFont boldSystemFontOfSize:20];
+    downloadBtn.titleLabel.font = [UIFont boldSystemFontOfSize:16];
     downloadBtn.layer.borderColor = [UIColor blackColor].CGColor;
     downloadBtn.layer.borderWidth = 1;
     downloadBtn.layer.cornerRadius = 10;
@@ -81,6 +83,11 @@ static NSString *MUSICURL = @"http://mobile.ximalaya.com/mobile/v1/album?albumId
         make.height.mas_equalTo(30);
     }];
     self.tableView.tableFooterView = tableFooterView;
+}
+- (void)downloadBtnClick:(UIButton *)btn {
+    FFCustomDownloadingViewController *customDownloadingVC = [[FFCustomDownloadingViewController alloc] init];
+    customDownloadingVC.musicArr = self.dataArray;
+    [self.navigationController pushViewController:customDownloadingVC animated:YES];
 }
 
 #pragma mark - 右上角进入下载界面的按钮
