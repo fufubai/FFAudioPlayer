@@ -19,6 +19,8 @@
 @property (nonatomic,strong)NSMutableArray *downloadArr;
 
 @property (nonatomic,strong)UIButton *downloadListBtn;
+
+@property (nonatomic,strong)NSCache *musicCache;//储存已经存在的音频
 @end
 
 @implementation FFCustomDownloadingViewController
@@ -28,6 +30,13 @@
         _downloadArr = [NSMutableArray arrayWithCapacity:20];
     }
     return _downloadArr;
+}
+
+- (NSCache *)musicCache {
+    if (_musicCache == nil) {
+        _musicCache = [[NSCache alloc] init];
+    }
+    return _musicCache;
 }
 
 - (void)viewDidLoad {
@@ -59,6 +68,7 @@
             btn.enabled = NO;
             
             [self downloadSelectedMusic];
+            [self.tableView setEditing:NO];
             
         }else {
             UIAlertController *alertController = [UIAlertController alertControllerWithTitle:@"请选择要下载的音频" message:nil preferredStyle:UIAlertControllerStyleAlert];
@@ -89,14 +99,23 @@
     {
         NSIndexPath *indexPath = [NSIndexPath indexPathForItem:i inSection:0];
         NSDictionary *dict = self.musicArr[i];
-        if ([[FFSQLiteTool queryDownloadMusicWithTitleName:dict[MUSICTITLE_WEB]][@"isExist"] boolValue]) {
+        
+        if ([[self.musicCache objectForKey:dict[MUSICTITLE_WEB]] boolValue]) {
             UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
             cell.backgroundColor = [UIColor redColor];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
         }else {
-            [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionTop];
-            [self.downloadArr addObject:self.musicArr[i]];
+            if ([[FFSQLiteTool queryDownloadMusicWithTitleName:dict[MUSICTITLE_WEB]][@"isExist"] boolValue]) {
+                [self.musicCache setObject:@"1" forKey:dict[MUSICTITLE_WEB]];
+                UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
+                cell.backgroundColor = [UIColor redColor];
+                cell.selectionStyle = UITableViewCellSelectionStyleNone;
+            }else {
+                [self.tableView selectRowAtIndexPath:indexPath animated:YES scrollPosition:UITableViewScrollPositionTop];
+                [self.downloadArr addObject:self.musicArr[i]];
+            }
         }
+        
         
     }
 }
@@ -117,11 +136,18 @@
 
 - (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
     NSDictionary *dict = self.musicArr[indexPath.row];
-    if ([[FFSQLiteTool queryDownloadMusicWithTitleName:dict[MUSICTITLE_WEB]][@"isExist"] boolValue]) {
+    
+    if ([[self.musicCache objectForKey:dict[MUSICTITLE_WEB]] boolValue]) {
         return NO;
     }else {
-        return YES;
+        if ([[FFSQLiteTool queryDownloadMusicWithTitleName:dict[MUSICTITLE_WEB]][@"isExist"] boolValue]) {
+            [self.musicCache setObject:@"1" forKey:dict[MUSICTITLE_WEB]];
+            return NO;
+        }else {
+            return YES;
+        }
     }
+    
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
@@ -138,15 +164,25 @@
     }
     NSDictionary *dic = self.musicArr[indexPath.row];
     cell.textLabel.text = dic[MUSICTITLE_WEB];
-    if ([[FFSQLiteTool queryDownloadMusicWithTitleName:dic[MUSICTITLE_WEB]][@"isExist"] boolValue]) {
+    
+    if ([[self.musicCache objectForKey:dic[MUSICTITLE_WEB]] boolValue]) {
         cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",@"100%"];
         cell.backgroundColor = [UIColor redColor];
         cell.selectionStyle = UITableViewCellSelectionStyleNone;
     }else {
-        cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",@"0%"];
-        cell.backgroundColor = [UIColor clearColor];
-        cell.selectionStyle = UITableViewCellSelectionStyleDefault;
+        if ([[FFSQLiteTool queryDownloadMusicWithTitleName:dic[MUSICTITLE_WEB]][@"isExist"] boolValue]) {
+            [self.musicCache setObject:@"1" forKey:dic[MUSICTITLE_WEB]];
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",@"100%"];
+            cell.backgroundColor = [UIColor redColor];
+            cell.selectionStyle = UITableViewCellSelectionStyleNone;
+        }else {
+            [self.musicCache setObject:@"0" forKey:dic[MUSICTITLE_WEB]];
+            cell.detailTextLabel.text = [NSString stringWithFormat:@"%@",@"0%"];
+            cell.backgroundColor = [UIColor clearColor];
+            cell.selectionStyle = UITableViewCellSelectionStyleDefault;
+        }
     }
+    
     
     
     return cell;
@@ -154,10 +190,13 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     NSDictionary *dic = self.musicArr[indexPath.row];
+    
     if (![[FFSQLiteTool queryDownloadMusicWithTitleName:dic[MUSICTITLE_WEB]][@"isExist"] boolValue]) {
+        [self.musicCache setObject:@"0" forKey:dic[MUSICTITLE_WEB]];
         [self.downloadArr addObject:self.musicArr[indexPath.row]];
         FFLog(@"self.downloadArr.count%ld",self.downloadArr.count);
     }
+    
     
 }
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath {
@@ -184,6 +223,7 @@
 }
 
 - (void)setDownloadBtnTitle:(NSDictionary *)dict {
+    
     for (int i = 0; i < self.musicArr.count; i ++ ) {
         NSDictionary *dictAll = self.musicArr[i];
         if ([dictAll[MUSIC_WEB] isEqualToString:dict[@"downloadUrl"]]) {
@@ -192,7 +232,7 @@
             NSString *rate = [progress.localizedDescription substringToIndex:range.location + 1];
             NSIndexPath *indexPath = [NSIndexPath indexPathForRow:i inSection:0];
             UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
-            cell.backgroundColor = [UIColor redColor];
+            cell.backgroundColor = [UIColor greenColor];
             cell.selectionStyle = UITableViewCellSelectionStyleNone;
             cell.detailTextLabel.text = rate;
             
@@ -228,6 +268,7 @@
     if (self.downloadArr.count == 0) {
         self.downloadListBtn.enabled = YES;
         self.downloadListBtn.selected = NO;
+        [self.tableView setEditing:NO animated:YES];
         sleep(1);//防止查询和写入不匹配
         [self.tableView reloadData];
     }

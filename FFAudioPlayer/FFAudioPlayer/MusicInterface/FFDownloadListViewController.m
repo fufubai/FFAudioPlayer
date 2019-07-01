@@ -27,7 +27,9 @@
     self.view.backgroundColor = [UIColor whiteColor];
     self.title = @"download list";
     [self prepareTableView];
-    [self getDownloadUrl];
+    
+    [self performSelector:@selector(getDownloadUrl) withObject:nil afterDelay:0];
+    
     [self prepareDownloadBtnlist];
 }
 
@@ -80,6 +82,11 @@
 //从沙盒获取下载文件
 - (void)getDownloadUrl {
     self.dataArray = [FFSQLiteTool queryAllDownloadMusic].mutableCopy;
+    
+    [self performSelector:@selector(reloadTableView) withObject:nil afterDelay:0];
+}
+
+- (void)reloadTableView {
     [self.tableView reloadData];
     [self setExtraCellLineHidden:self.tableView];
 }

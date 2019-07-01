@@ -47,6 +47,10 @@
 
 @property (nonatomic,strong)UIImage *saveImage;
 
+@property (nonatomic, strong) UIDynamicAnimator *animator;//重力感应动画
+@property (nonatomic,strong)UIGravityBehavior *gravity;
+@property (nonatomic,strong)UICollisionBehavior *collision;
+
 
 @end
 
@@ -70,6 +74,7 @@
     [[UIApplication sharedApplication] beginReceivingRemoteControlEvents];
     
 }
+
 - (void)finishDownloadMusic:(NSNotification *)noti {
     if ([noti.object isEqualToString:self.musicDic[MUSIC_WEB]]) {
         self.downloadButton.selected = NO;
@@ -305,17 +310,7 @@
         make.width.height.mas_equalTo(60);
         make.centerX.mas_equalTo(self.view.mas_centerX);
     }];
-}
-
-#pragma mark - 为界面添加向下滑动手势
-- (void)addDownSwipeGesture {
-    UISwipeGestureRecognizer *recognizer = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(handleSwipeFrom:)];
-    [recognizer setDirection:(UISwipeGestureRecognizerDirectionDown)];
-    [[self view] addGestureRecognizer:recognizer];
-}
-
-- (void)handleSwipeFrom:(UISwipeGestureRecognizer *)gesture {
-    [self dismissViewControllerAnimated:YES completion:nil];
+    
 }
 
 #pragma mark - 播放点击事件
@@ -747,5 +742,87 @@
     self.effectView = effectView;
     effectView.frame = CGRectMake(0, -20, bacImgView.frame.size.width, bacImgView.frame.size.height+20);
     [bacImgView addSubview:effectView];
+}
+
+
+#pragma mark - 添加动画
+- (void)addDownSwipeGesture {
+    UISwipeGestureRecognizer *recognizerDown = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(handleSwipeFromDown:)];
+    [recognizerDown setDirection:(UISwipeGestureRecognizerDirectionDown)];
+    [[self view] addGestureRecognizer:recognizerDown];
+    
+    UISwipeGestureRecognizer *recognizerUp = [[UISwipeGestureRecognizer alloc]initWithTarget:self action:@selector(handleSwipeFromUP:)];
+    [recognizerUp setDirection:(UISwipeGestureRecognizerDirectionUp)];
+    [[self view] addGestureRecognizer:recognizerUp];
+}
+
+- (void)handleSwipeFromDown:(UISwipeGestureRecognizer *)gesture {
+//    [self groupAnimation:NO];
+    [self gravityAnimation];
+}
+- (void)handleSwipeFromUP:(UISwipeGestureRecognizer *)gesture {
+//    [self groupAnimation:YES];
+    [self removeAllAnimation];
+}
+
+//移除所有动画
+- (void)removeAllAnimation {
+    [self.animator removeAllBehaviors];
+}
+
+//重力感应
+- (void)gravityAnimation {
+    //1 创建物理仿真器,动画的范围
+    self.animator = [[UIDynamicAnimator alloc] initWithReferenceView:self.view];
+    
+    //2 创建物理仿真行为
+    //2.1 重力行为
+    UIGravityBehavior *gravity = [[UIGravityBehavior alloc] initWithItems:@[self.playButton,self.lastButton,self.nextButton,self.musicTitleLabel,self.sliderProgress,self.playerProgress,self.totalTimeLabel,self.nowTimeLabel,self.revolveImage,self.stopDownloadButton,self.downloadButton,self.backButton]];
+    self.gravity = gravity;
+    //2.2 碰撞行为
+    UICollisionBehavior *collision = [[UICollisionBehavior alloc] initWithItems:@[self.playButton,self.lastButton,self.nextButton,self.musicTitleLabel,self.sliderProgress,self.playerProgress,self.totalTimeLabel,self.nowTimeLabel,self.revolveImage,self.stopDownloadButton,self.downloadButton,self.backButton]];
+    self.collision = collision;
+    
+    //2.3 碰撞的边界，translatesReferenceBoundsIntoBoundary设置为YES而不是明确的添加边界的坐标。这样会使这个边界使用 UIDynamicAnimator 提供的参考系的边界。
+    collision.translatesReferenceBoundsIntoBoundary = YES;
+    
+    //2.5 自定义边界，添加矩形边界
+//    UIBezierPath *path = [UIBezierPath bezierPathWithRect:CGRectMake(0, 200, 180, 20)];
+//    [collision addBoundaryWithIdentifier:@"b2" forPath:path];
+    
+    
+    //3 把物理仿真行为添加到物理仿真器中
+    [self.animator addBehavior:gravity];
+    [self.animator addBehavior:collision];
+}
+
+
+//组动画
+- (void)groupAnimation:(BOOL)back {
+    CABasicAnimation *animation1 = [CABasicAnimation animationWithKeyPath:@"transform.translation.y"];
+    CABasicAnimation *animation2 = [CABasicAnimation animationWithKeyPath:@"transform.scale"];
+    CABasicAnimation *animation3 = [CABasicAnimation animationWithKeyPath:@"transform.rotation"];
+    
+    if (back) {
+        animation1.toValue = @(0);
+        animation2.toValue = @(1);
+        animation3.byValue = @(2*M_PI);
+    }else {
+        animation1.toValue = @(200);
+        animation2.toValue = @(0.5);
+        animation3.byValue = @(2*M_PI);
+    }
+    //组动画
+    CAAnimationGroup *group = [CAAnimationGroup animation];
+    group.animations = @[animation1,animation2,animation3];
+    
+    group.duration = 3;
+    
+    group.removedOnCompletion = NO;
+    group.fillMode = kCAFillModeForwards;
+    
+    [self.playButton.layer addAnimation:group forKey:nil];
+    [self.nextButton.layer addAnimation:group forKey:nil];
+    [self.lastButton.layer addAnimation:group forKey:nil];
 }
 @end
